@@ -1,0 +1,134 @@
+\documentclass[a4paper,12pt,twoside]{article}
+
+%PACKAGES
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\usepackage[utf8]{inputenc}
+\usepackage[slovak]{babel}
+\usepackage{comment}
+
+\usepackage{graphicx,amsmath,amssymb, amsthm, multicol}
+\usepackage{pdfpages}
+
+\usepackage[nottoc]{tocbibind}
+\usepackage{mathrsfs}
+\usepackage{psfrag}
+\usepackage[small,bf]{caption}
+\usepackage{ifthen}
+
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+
+\usepackage[toc,page]{appendix}
+
+\usepackage{url}
+\urlstyle{rm}
+\renewcommand\UrlFont{\color{black}}
+
+\usepackage{pgfplots}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,chains,fit,shapes,calc}
+
+% \renewcommand{\familydefault}{\rmdefault}
+
+\newtheorem{defin}{Definícia}[section]
+\newtheorem{theorem}[defin]{Veta}
+\newtheorem{prop}[defin]{Tvrdenie}
+\newtheorem{lema}[defin]{Lema}
+\newtheorem{cor}[defin]{Dôsledok}
+\newtheorem{hypoteza}{Hypotéza}[section]
+\newtheoremstyle{comment}{}{}{}{}{}{:}{ }{#1}
+\theoremstyle{comment}
+\newtheorem{dokaz}{Dôkaz}[section]
+\newtheorem{com}{\textit{Poznámka}}
+
+\usepackage{hyperref}                                     
+\hypersetup{%  http://www.tug.org/applications/hyperref/
+bookmarksnumbered,
+pdfstartview={FitH},
+linkcolor=black,
+citecolor=black,
+colorlinks=true,
+pdfpagemode={None},
+plainpages=false
+}%
+
+%%\usepackage{fullpage}
+%%\setlength{\topmargin}{-0.5cm}
+%%\setlength{\headheight}{0cm}
+%%\setlength{\headsep}{0in}
+\setlength{\textheight}{24cm}
+\setlength{\textwidth}{15.5cm}
+\addtolength{\voffset}{-1.2cm}
+\addtolength{\hoffset}{-0.3cm}
+%%\addtolength{\rightmargin}{-1cm}
+\setlength{\parindent}{0.5cm}
+\setlength{\parskip}{0in}
+\linespread{1.5}
+
+\setcounter{MaxMatrixCols}{20}
+
+\begin{document}
+
+  \input{01 Titulka}
+
+  \input{02 Thesis_info}
+
+%   \includepdf[pages={1}, offset=25 -75]{zadanieRD.pdf}
+
+  \input{03 Podakovanie}
+
+  \newpage
+  \input{04 Abstrakt}
+
+  \newpage
+  \input{05 Abstract}
+  \newpage \tableofcontents
+  \setcounter{page}{7}
+ % \newpage
+ % \listoffigures
+ % \newpage
+ % \listoftables  
+  \newpage
+
+    \section*{Úvod}	          
+    \markboth{ÚVOD}{ÚVOD}  
+    \addcontentsline{toc}{section}{Úvod}
+    
+    \input{06 Uvod} 
+
+  \newpage
+  \input{07 kap1}
+
+%   \newpage  
+% 	\input{08 kap2}
+
+%   \newpage
+% 	\input{09 kap3}
+
+%   \newpage
+%   \input{10 kap4}
+
+	\newpage
+  \section*{Záver}
+    \addcontentsline{toc}{section}{Záver}
+    \markboth{ZÁVER}{ZÁVER} 
+    \input{12 Zaver}
+  
+  \newpage
+  \renewcommand{\refname}{Zoznam použitej literatúry}
+  \input{13 Literatura}
+  
+% 	\newpage
+%   \appendix
+%   \section*{Príloha A} 
+%     \label{appendix:a}
+%     \addcontentsline{toc}{section}{Príloha A}
+%     \markboth{Príloha A}{Príloha A}
+%     \input{14 AppendixA}
+
+\end{document}

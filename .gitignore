@@ -1,0 +1,9 @@
+.vscode
+master_thesis.log
+master_thesis.toc
+master_thesis.aux
+master_thesis.out
+master_thesis.pdf
+texput.log
+
+*.gz
