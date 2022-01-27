@@ -1,0 +1,134 @@
+\section{Teoretická predpríprava}
+\label{teoreticka predpriprava}
+
+\subsection{Logistická regresia}
+ 
+Logistická regresia je štatistická metóda využívaná pri binárnej klasifikácii.
+Cieľom logistickej regresie je modelovať pravdepodobnosť nejakej triedy alebo udalosti (vysvetľovanej premennej)
+na základe jednej alebo viacerých vysvetľujúcich premenných. TODO
+
+Pred tým, než opíšeme, ako presne logistická regresia funguje, si zadefinujme niekoľko dôležitých pojmov, s ktorými logistická regresia narába.
+
+\begin{defin}
+    Logistická funkcia \( \sigma : \mathbb{R} \rightarrow (0, 1) \) je definovaná ako:
+    \[
+        \sigma(t) = \frac{e^t}{e^t + 1} = \frac{1}{1 + e^{-t}}
+    \]
+    Inverzná funkcia k logistickej sa nazýva logit funkcia a spĺňa:
+    \[
+        logit(t) = \sigma^{-1}(t) = \ln\left(\frac{p}{1 - p}\right)
+    \]
+    pre \( p \in (0, 1) \).
+\end{defin}
+
+Na obrázku je zobrazený graf logistickej funkcie na intervale \( (-6, 6) \):
+
+% \begin{center}
+%     \begin{tikzpicture}
+%     \begin{axis}[
+%         xlabel={x},
+%         ylabel={y},
+%         xmin=-6, xmax=6,
+%         ymin=0, ymax=1,
+%         xtick={-4,-2,0,2,4},
+%         ytick={0,0.2,0.4,0.6,0.8,1},
+%         legend pos=north west,
+%         ymajorgrids=true,
+%         grid style=dashed,
+%         height=8cm,
+%         width=15cm,
+%     ]
+    
+%     \addplot[
+%         color=blue,
+%         mark=square,
+%         ]
+%         coordinates {
+%         (2, 1.0)(3, 0.5)(4, 0.25)(5, 0.16667)(6, 0.11111)(7, 0.08333)(8, 0.0625)(9, 0.05)(10, 0.04)(11, 0.03333)(12, 0.02778)(13, 0.02381)(14, 0.02041)(15, 0.01786)(16, 0.015625)
+%         };
+%         % \legend{Rozptyl}
+        
+%     \end{axis}
+%     \end{tikzpicture}
+% \end{center}
+
+
+\begin{center}
+\begin{tikzpicture}[>=stealth]
+    \begin{axis}[
+        xmin=-6,xmax=6,
+        ymin=0,ymax=1,
+        axis x line=middle,
+        axis y line=middle,
+        axis line style=<->,
+        xlabel={$x$},
+        ylabel={$y$},
+        ]
+        \addplot[no marks,blue,solid] expression[domain=-6:6,samples=100]{1/(1 + exp(-x))};
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+Argumentom prirodzeného logaritmu v logit funkcii je výraz \( \frac{p}{1 - p} \) pre \( p \in (0, 1) \).
+Ak takéto \(p\) budeme chápať ako pravdepodobnosť, výraz \( \frac{p}{1 - p} \) predstavuje takzvaný pomer šancí (\emph{angl. odds-ratio}).
+Napríklad pri hode kockou je pravdepodobnosť padnutia šestky rovná \( 1/6 \) a pomer šancí je \( \frac{\frac{1}{6}}{1 - \frac{1}{6}} = \frac{\frac{1}{6}}{\frac{5}{6}} = \frac{1}{5} = 1 : 5\),
+čo znamená, že 1 možný výsledok hodu kockou zodpovedá šestke a 5 možných výsledkov šestke nezodpovedá.
+
+Nech \( Y \) je binárna vysvetľovaná premenná, ktorej zodpovedá vektor vysvetľujúcich premenných \( x = (x_1, x_2, \ldots, x_k) \).
+Pre \( Y \) zjavne platí \( P(Y = 1|x) = 1 - P(Y = 0|x) \).
+Logistická regresia predpokladá, že logaritmus pomeru šancí (\emph{angl. log-likelihood ratio}) možno modelovať ako lineárnu funkciu zložiek vektora \( x \).
+
+\[
+\ln \left( \frac{P(Y = 1|x)}{P(Y = 0|x)} \right) = \ln \left( \frac{P(Y = 1|x)}{1 - P(Y = 1|x)} \right) = \beta_0 + \beta^T x
+\]
+
+Po úpravách sa ľahko dopracujeme k záveru, že pravdepodobnosť \( P(Y = 1|x) \) je rovná výstupu logistickej funkcie, ktorej argument bude hľadaná lineárna kombinácia zložiek vektora \( x \).
+
+\begin{equation} \label{logistic_regression}
+P(Y = 1|x) = \frac{1}{1 - e^{-(\beta_0 + \beta^T x})} := h(x)
+\end{equation}
+
+Ak logistickú regresiu používame na predikciu (čo budeme robiť neskôr v tejto práci),
+vzorec (\ref{logistic_regression}) nám poslúži na výpočet pravdepodobnosti \( P(Y = 1|x) \) pri danom novom \( x \).
+
+\subsubsection{Odhad parametrov v logistickej regresii}
+
+Majme teda zovšebecnený regresný model tvaru
+
+\[
+h_\beta(x) = P(Y = 1|x) = \frac{1}{1 - e^{-(\beta_0 + \beta^T x})}
+\]
+
+Neznámymi parametrami v tomto modeli sú regresory \( \beta = (\beta_1, \ldots, \beta_k) \).
+Na odhad regresných koeficientov sa vo väčšine prípadov používa metóda maximálnej vierohodnosti.
+Na rozdiel od obyčajnej lineárnej regresie s normálne rozdelenými chybami, v logistickej regresii nie je možné nájsť exaktné vyjadrenie parametrov \( \beta \),
+a na ich odhad sa používa nejaká iteračná metóda.
+
+Keďže \(Y\) nadobúda len hodnoty z \( \{0, 1\} \), pre distribučnú funkciu \(Y\) platí:
+
+\[
+P(y | x; \beta ) = h_\beta(x)^y (1 - h_\beta(x))^{1 - y}
+\]
+
+Majme namerané vektory dát \( x_1, \ldots, x_n \), \( x_i = x_{i1}, \ldots, x_{ik} \),
+a k nim prislúchajúce \( y_1, \ldots, y_n \). Potom pre funkciu vierohodnosti parametra \( \beta \) platí
+
+\[
+L(\beta | y; ) TODO
+\]
+
+Trénovanie logistickej regresie spočíva v maximalizovaní funkcie vierohodnosti,
+čo je ekvivalentné maximalizácii jej logaritmu (\emph{angl. log-likelihood function}), a teda hľadáme
+
+\[
+TODO
+\]
+
+Na nájdenie maxima log-likelihood funkcie sa používajú iteračné metódy,
+napr. funkcia \emph{glm} v základnej verzii jazyka \emph{R} využíva metódu \emph{IRLS} (\emph{iteratively reweighted least squares}).
+
+\subsubsection{Sumárne štatistiky v logistickej regresii}
+
+TODO: Tu napíšem niečo o hodnotách ako \(R^2\) atď., ešte to nemám celkom premyslené.
+
+\subsubsection{Interpretácia parametrov v logistickej regresii}

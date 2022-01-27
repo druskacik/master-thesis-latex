@@ -1,2 +1,36 @@
-\section{História modelovania úpadku podnikov}
-\label{bankruptcy prediction history}
+\section{Bankrot na Slovensku}
+\label{bankruptcy}
+
+Cieľom tejto práce je vytvoriť model na predikciu úpadku firiem na základe jej finančných údajov.
+Pre účely modelovania si na začiatok zadefinujme, čo budeme rozumieť pod pojmom úpadok.
+Problematikou bankrotu právnických a fyzických osôb na Slovensku sa venuje najmä zákon 7/2005 Z. z. o konkurze a reštrukuturalizácii,
+ktorý definuje úpadok nasledovne.
+
+\bigskip
+\textit{(1)
+Dlžník je v úpadku, ak je platobne neschopný alebo predlžený. Ak dlžník podá návrh na vyhlásenie konkurzu, predpokladá sa, že je v úpadku.}
+
+\textit{(2)
+Právnická osoba je platobne neschopná, ak nie je schopná plniť 30 dní po lehote splatnosti aspoň dva peňažné záväzky viac ako jednému veriteľovi. […]}
+
+\textit{(3)
+Predlžený je ten, kto je povinný viesť účtovníctvo podľa osobitného predpisu, má viac ako jedného veriteľa a hodnota jeho záväzkov presahuje hodnotu jeho majetku. […]}
+\bigskip
+
+Keď je právnická osoba v úpadku, je potrebné vyhlásiť konkurz alebo reštrukturalizáciu.
+Konkurzné a reštrukturalizačné konania schvaľuje súd, vďaka čomu poznáme presný dátum ich začiatku, čo sa nám zíde pri modelovaní.
+
+Konkurz znamená speňaženie majetkovej podstaty dlžníka a pomerné uspokojenie jeho veriteľov z tohto majetku.
+Konkurz má charakter likvidačného konania a jeho výsledkom je zrušenie a zánik podniku.
+V bežnej praxi ide o zdĺhavý proces, ktorý môže trvať aj niekoľko rokov.
+
+Na rozdiel od konkurzu, reštrukturalizácia nemá likvidačný charakter a je možné vyhlásiť ju už v čase hroziaceho úpadku.
+Cieľom reštrukturalizácie je zachovanie podniku alebo jeho časti a postupné uspokojenie veriteľov spôsobom dohodnutým v reštrukturalizačnom pláne.
+Uspokojenie pohľadávok býva v praxi rýchlejšie ako pri konkurze.
+V prípade, že reštrukturalizácia bude úspešná, právnická osoba može naďalej pokračovať v podnikateľskej činnosti,
+avšak predpokladom jej úspechu je to, že pohľadávky veriteľov sa budú počas ďalšieho fungovania podniku uspokojovať vo vyššej miere ako v prípade konkurzu.
+
+Spoločným znakom konkurzu a reštrukturalizácie je skutočnosť, že dlžník sa nachádza v krízovej ekonomickej situácii.
+Pre účely tejto práce budeme \emph{bankrotom} rozumieť začiatok konkurzného alebo reštrukturalizačného konania.
+
+\subsection{Bankrot - vzácna udalosť}
