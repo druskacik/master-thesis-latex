@@ -34,3 +34,47 @@ Spoločným znakom konkurzu a reštrukturalizácie je skutočnosť, že dlžník
 Pre účely tejto práce budeme \emph{bankrotom} rozumieť začiatok konkurzného alebo reštrukturalizačného konania.
 
 \subsection{Bankrot - vzácna udalosť}
+
+Úpadok alebo bankrot možno považovať v rámci populácie aktívnych firiem za vzácnu udalosť.
+Databáza \emph{FinStat}, ktorej dáta budeme využívať v tejto práci, eviduje celkovo 6946 prípadov konkurzného alebo reštrukturalizačného konania za obdobie existencie samostatnej Slovenskej republiky.
+Ako uvidíme, nie každé z týchto konaní sa hodí na modelovanie, či už kvôli nedostatku dostupných dát alebo inej príčiny.
+
+Napríklad, z počtu 6946 firiem v úpadku len pre 3730 firiem poznáme presný dátum začiatku konkurzného alebo reštrukturalizačného konania.
+Dátum začiatku konania nepoznáme zväčša pre staršie firmy, ktoré zanikli pred rokom 2010, a pre ktoré by sme v mnohých prípadoch aj tak nemali dostatok dát pre úspešné zahrnutie do modelu.
+
+V tabuľke uvádzame počet konkurzov a reštrukturalizácií a počet aktívnych firiem od roku 2011 po rok 2020.
+
+\begin{center}
+    \begin{tabular}{ |c|c|c|c|p{3cm}|p{3cm}| }
+        \hline
+        Rok & Konkurzy & Reštrukturalizácie & Spolu & Celkový počet aktívnych firiem & Proporcia firiem v úpadku \\
+        \hline
+        2011 & 282 & 21 & 303 & TODO & TODO \\
+        \hline
+        2012 & 296 & 36 & 332 & & \\
+        \hline
+        2013 & 318 & 49 & 367 & & \\
+        \hline
+        2014 & 329 & 56 & 385 & & \\
+        \hline
+        2015 & 325 & 49 & 374 & & \\
+        \hline
+        2016 & 222 & 35 & 257 & & \\
+        \hline
+        2017 & 215 & 22 & 237 & & \\
+        \hline
+        2018 & 256 & 6 & 262 & & \\
+        \hline
+        2019 & 254 & 8 & 262 & & \\
+        % pozn: v roku 2019 mala jedna firma konanie s kategoriou "ine", ide o firmu s ico 36595098 ... po rucnej kontrole som ju zaradil medzi restrukturalizacie
+        \hline
+        2020 & 185 & 19 & 204 & & \\
+        \hline
+    \end{tabular}
+\end{center}
+\bigskip
+
+Ako vidíme, počet firiem v úpadku sa každoročne nachádza pod hranicou 0,5 \% z aktívnych firiem.
+Z uvedeného vyplýva, že pri modelovaní úpadku firiem budeme pracovať so silno nevyváženými dátami (\emph{angl. unbalanced classes}).
+
+TODO: bližší opis bankrotov podľa odvetví a pod.
