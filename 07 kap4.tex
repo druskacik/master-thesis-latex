@@ -1,0 +1,41 @@
+\section{Metodika praktickej časti práce}
+\label{metodika}
+
+V praktickej časti diplomovej práce vytvoríme niekoľko modelov logistickej regresie na predikciu bankrotu firiem.
+Na modelovanie použijeme finančné dáta o slovenských firmách dostupné z databázy \emph{FinStat}.
+
+Bankrot predstavuje v populácii firiem vzácnu udalosť, preto jedným z problémov bude vybrať vhodnú vzorku na natrénovanie modelov.
+Firiem, ktoré za celé obdobie ich existencie neboli v úpadku, je obrovské množstvo, a z tohto množstva použijeme na tréning len malú vzorku – vykonáme tzv. undersampling.
+Rôzne metódy undersamplingu v súvislosti s využitím na bankrotné modely sú opísané napr. v \cite{protopapadakis},
+zo záverov tejto práce však vyplýva, že komplikovanejšie metódy undersamplingu neprinášajú preukázateľne lepšie výsledky než jednoduchý náhodný výber.
+
+Pre zachovanie jednoduchosti vykonáme undersampling podobným spôsobom, akým sa vykonáva vo väčšine prác venovaných problematike kreditného rizika \cite{zmijewski},
+a to dopárovaním jednej prosperujúcej firmy (t.j. firmy, ktorá za celé obdobie svojho pôsobenia nebola v úpadku) ku každej z firiem v úpadku,
+pričom dopárovanie vykonáme na základe zhody odvetvia a podobnosti tržieb.
+
+V ďalšej časti sa zameriame na vytvorenie modelu logistickej regresie na predikciu bankrotu firmy.
+Počet údajov (parametrov) v databáze \emph{FinStat} dostupných pre každú jednu firmu je vyše 70, nie všetky z týchto parametrov sa ale hodia na predikciu bankrotu.
+Na výber najsignifikantnejších ukazovateľov použijeme dve metódy – LASSO (\emph{least absolute shrinkage and selection operator}) a bayesovské priemerovanie modelov.
+
+\subsection{Interpretovateľnosť ako sila logistickej regresie}
+
+Odkedy Edward Altman v roku 1968 uverejnil prvý článok o svojom Z-skóre, bolo na tému predikcie úpadku napísaných desiatky ďalších prác.
+Napriek tomu, že mnohé z týchto analýz vyústili do modelov, ktoré mali preukázateľne lepšiu predikčnú schopnosť ako Z-skóre,
+Altmanov model diskriminačnej analýzy patrí dodnes medzi najpoužívanejšie a najcitovanejšie modely kreditného rizika [TODO: zdroj?].
+
+Dôvodov pre túto skutočnosť je niekoľko, ale najvýraznejším argumentom pre Altmanovo Z-skóre je jeho relatívna jednoduchosť (pracuje len s 5 údajmi)
+a z nej vyplývajúca široká aplikovateľnosť Z-skóre pre mnohé odvetvia či krajiny.
+Mnohé z modelov, ktoré preukázali lepšiu predikčnú schopnosť než Z-skóre,
+majú omnoho komplikovanejší charakter – pracujú s väčším množstvom parametrov alebo používajú dáta za viac rokov pôsobenia firmy.
+
+Navyše, uvedomme si, že bankrot je silno negatívna udalosť, čo z problematiky jeho predikcie robí výrazne citlivú tému.
+V podobných situáciach je často hodnotnejšia predikcia jednoduchším modelom,
+ktorého výstup si vie používateľ skontrolovať a zhodnotiť jeho relevanciu pre daný konkrétny vstup, než predikcia komplikovanejším modelom,
+ktorý sa síce preukázal ako presnejší na nejakej validačnej vzorke, ale je ťažko interpretovateľný aj pre odborníka z praxe.
+
+Pre účely vytvorenia modelu predikcie úpadku sme zvolili logistickú regresiu práve z toho dôvodu,
+že predstavuje kompromis medzi interpretovateľnosťou a predikčnou robustnosťou.
+Oproti diskriminačnej analýze, ktorú využil Altman, je model logistickej regresie o niečo komplikovanejší,
+na druhej strane ale prináša iné výhody ako napr. zmiernenie matematických požiadaviek na vstupné dáta
+či ľahko uchopiteľný obor hôdnot výsledného modelu (interval \([0, 1]\)), a to pri zachovaní jednoduchej interpretovateľnosti jeho parametrov.
+Uvedomme si, že logistická regresia nemusí slúžiť len ako nástroj na predikciu a často sa vytvára za účelom štatistickej interpretácie dát.

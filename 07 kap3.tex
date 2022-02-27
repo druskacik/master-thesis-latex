@@ -132,3 +132,91 @@ napr. funkcia \emph{glm} v základnej verzii jazyka \emph{R} využíva metódu \
 TODO: Tu napíšem niečo o hodnotách ako \(R^2\) atď., ešte to nemám celkom premyslené.
 
 \subsubsection{Interpretácia parametrov v logistickej regresii}
+
+TODO
+
+\subsection{Bayesian averaging of classical estimates (BACE)}
+
+Dáta, ktoré budeme spracúvať v našej práci, obsahujú 70 vysvetľujúcich premenných pre každý rok pôsobenia firmy.
+Prirodzene, nie všetky z nich sa hodia na modelovanie bankrotu.
+Naším cieľom bude vytvoriť model, ktorý bude relatívne jednoduchý, a v ktorom budú vystupovať len tie najsignifikantnejšie vysvetľujúce premenné z hľadiska predikcie bankrotu.
+V tejto časti si opíšeme jednu z metód, ktorú použijeme, a to \emph{bayesian averaging of classical estimates} (\emph{BACE}).
+
+Základná metóda \emph{BACE} bola vybudovaná za účelom vytvorenia lineárnej regresie, ale jej hlavnú ideu možno ľahko využiť aj pri logistickej regresii.
+Názov \emph{bayesian averaging of classical estimates} vznikol na základe toho, že metóda BACE využíva bayesovské priemerovanie modelov (\emph{angl. bayesian averaging}) a klasické odhady parametrov lineárnej regresie metódou najmenších štvorcov.
+
+\subsubsection{Bayesovská štatistika}
+
+Metóda \emph{BACE} narába s teóriou bayesovskej štatistiky.
+V klasickej štatistike predpokladáme, že parametre majú pevnú, ale neznámu hodnotu.
+Neznáme parametre v klasickej štatistike nie sú náhodnými premennými a nemajú pravdepodobnostnú hustotu.
+Narozdiel od toho v bayesovskej štatistike považujeme parametre za náhodné premenné, pričom ich náhodnosť zodpovedá miere neistoty, ktorú o danom parametri máme.
+
+\subsubsection{Bayesovské priemerovanie modelov (bayesian model averaging)}
+
+Jedným zo základných tvrdení bayesovskej štatistiky je tzv. bayesovo pravidlo, ktoré hovorí nasledovne:
+
+\[
+P(A|B) = \frac{P(B|A) P(A)}{P(B)}
+\]
+
+Bayesovo pravidlo možno zovšeobecniť pre spojité náhodné premenné a ich hustoty. Pre náhodné premenné \(y\) a \( \beta \) platí:
+
+\begin{equation} \label{bayes_rule}
+    g(\beta | y) = \frac{f(y | \beta) g(\beta)}{f(y)}
+\end{equation}
+
+Aplikujme vzorec (\ref{bayes_rule}) na premenné, ktoré vystupujú v logistickej regresii.
+\( \beta \) je vektor parametrov (intercept a koeficienty jednotlivých vysvetľujúcich premenných),
+\( g(\beta) \) je jeho priórna hustota, ktorú interpretujeme ako presvedčenie výskumníka o parametri \( \beta \) predtým, než spoznáme dáta.
+\( y \) je vektor nameraných dát, \( f(y) \) je jeho hustota.
+\( g(\beta | y) \) je posteriórna hustota parametra \( \beta \) (hustota podmienená nameranými dátami \( y \)) a predstavuje presvedčenie výskumníka o parametri \( \beta \) po tom, ako spoznáme dáta \( y \).
+Bayesovo pravidlo hovorí o tom, ako skombinovať priórnu informáciu \( g \) s nameranými dátami \( y \) a spočítať naše konečné presvedčenie o parametri \( \beta \) – jeho posteriórnu hustotu \( g(\beta|y) \).
+
+Majme množinu \( X = \{X_1, \ldots X_k\} \) potenciálnych vysvetľujúcich premenných pre model logistickej regresie.
+Pri skúmaní signifikantnosti jednotlivých premenných \( X_1, \ldots, X_k \) máme možnosť danú premennú do modelu zaradiť alebo nezaradiť,
+existuje teda celkovo \( 2^k \) modelov so všetkými možnými kombináciami parametrov \( X_1, \ldots, X_k \).
+(\( M_i \) môže byť reprezentované napr. binárnym vektorom dĺžky \(k\), pričom hodnota na mieste \( j = 1, \ldots, k \) hovorí o zaradení, resp. nezaradení \(j\)-tej vysvetľujúcej premennej do modelu.)
+
+Výskumník zvolí priórne pravdepodobnosti \( P(M_i) \), pričom \( \sum P(M_i) = 1 \) (problematikou voľby priórnych pravdepodobností sa budeme zaoberať neskôr).
+Z bayesovho pravidla vyplýva, že:
+
+\[
+    g(\beta | y) = \sum_{i = 1}^{2^k} P(M_i) \frac{f(y | \beta) g(\beta | M_i)}{f(y)}
+\]
+
+Pre posteriórne pravdepodobnosti vyzerá vzorec nasledovne:
+
+\[
+    g(\beta | y) = \sum_{i = 1}^{2^k} P(M_i | y) \frac{f(y | \beta) g(\beta | M_i)}{f(y | M_i)}
+\]
+
+Keď poznáme posteriórne pravdepodobnosti (resp. váhy) modelov \( M_i \), umožní nám to výpočet strednej hodnoty parametra \( \beta \).
+
+\[
+    E(\beta | y) = \sum_{i = 1}^{2^k} P(M_i | y) \hat{\beta}
+\]
+
+kde \( \hat{\beta}_i = E(\beta |y, M_i) \) je odhad parametra \( \beta \) pri použití modelu \( M_i \) metódou maximálnej vierehodnosti
+(pozn.: pôvodná metóda BACE pracovala s lineárnou regresiou, kde odhad metódou maximálnej vierohodnosti je vlastne jednoznačný \emph{klasický} odhad metódou najmenších štvorcov;
+v prípade logistickej regresie parameter odhadujeme iteračnou metódou).
+
+Posteriórna disperzia parametra beta je daná vzorcom:
+
+\[
+    D(\beta | y) = \sum_{i = 1}^{2^k} P(M_i | y) D(\beta | y, M_i) + \sum_{i = 1}^{2^k} P(M_i | y) \left( \hat{\beta}_i - \sum_{i = 1}^{2^k} P(M_i | y) \hat{\beta}_i \right)^2
+\]
+
+Metóda BACE navyše umožňuje výpočet posteriórnej pravdepodobnosti zahrnutia premennej do modelu (\emph{angl. posterior inclusion probability}),
+čo bude jednoducho súčin posteriórných pravdepodobností modelov obsahujúcich danú vysvetľujúcu premennú.
+
+\[
+    P(\beta_j \neq 0 | y) = \sum_{i = 1}^{2^k} P(M_i | y) I_{\beta_{j, i} \neq 0}
+\]
+
+kde \( I_{\beta_{j, i} \neq 0} \) je indikátor prítomnosti vysvetľujúcej premennej \( X_j \) v modeli \( M_i \).
+
+Výpočet posteriórnej pravdepodobnosti zahrnutia bude hlavný výstup metódy BACE, ktorý využijeme.
+Za signifikantné premenné označíme tie, ktorých posteriórna pravdepodobnosť zahrnutia bude vyššia ako priórna pravdepodobnosť zahrnutia, čo predstavuje štandardný postup pri využívaní tejto metódy pri regresiách.
+
+\subsubsection{Voľba priórnych pravdepodobností}
