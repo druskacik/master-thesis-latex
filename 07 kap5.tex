@@ -1,0 +1,193 @@
+\section{Modelovanie rizika úpadku podnikov}
+
+V tejto kapitole si opíšeme proces vytvorenia modelov logistickej regresie za účelom predikcie rizika úpadku podnikov.
+
+\subsection{Dáta}
+
+V prvom kroku si vytvoríme trénovaciu vzorku pre modely logistickej regresie.
+Zdrojom dát je databáza \emph{FinStat}, ktorá spracúva údaje o slovenských spoločnostiach, ktorých je celkovo približne \(250000\).
+
+Niektoré firmy sa nehodia na modelovanie úpadku, či už svojím charakterom alebo nedostatočne či nepresne vyplnenými dátami.
+Napríklad budeme pracovať len s firmami, pri ktorých máme dostupné údaje z ich účtovných závierok, pretože ostatné firmy nemajú k dispozícii dostatok finančných údajov.
+Podrobný opis podmienok na firmy, ktoré zaradíme do trénovacich dát, uvádzame v nasledovnom zozname:
+
+\begin{enumerate}
+    \item Firma musí mať k dispozícii dáta z jej účtovnej závierky. Dôvod: účtovná závierka je zdrojom väčšiny finančných údajov firmy.
+    \item Účtovná závierka nesmie byť spracovaná ocr skenom. Dôvod: OCR sken dokumentu niekedy vytiahne nesprávne hodnoty, čo by mohlo negatívne ovplyvniť kvalitu dát.
+    \item Právna forma spoločnosti je jedna z nasledovných: Akciová spoločnosť, Družstvo, Komanditná spoločnosť, Spoločnosť s r. o., Verejne obchodovateľná spoločnosť, Jednoduchá spoločnosť na akcie. Vylúčené boli napr. neziskové organizácie, združenia, štátne podniky atď.
+    % \item Firma nepôsobí v odvetví s nasledovnými SK NACE kódmi:
+    % \begin{itemize}
+    %     \item 66290
+    %     \item 66200
+    %     \item 65120
+    %     \item 65110
+    %     \item 66000
+    %     \item 64190
+    %     \item 64100
+    %     \item 64200
+    %     \item 66110
+    %     \item 64300
+    %     \item 64910
+    % \end{itemize}
+    % Ide o spoločnosti z odvetvia poisťovníctva a financií, pri ktorých nie je jednotný spôsob výpočtu finančných údajov a ich zaradenie by mohlo negatívne ovplyvniť kvalitu dát.
+    \item Majetok spolu = Spolu vlastné imanie a záväzky (TODO: tomuto nerozumiem)
+    \item Obdobie, za ktoré spoločnosť zverejňuje účtovnú závierku, je jeden rok. Túto podmienku spĺňa drvivá väčšina firiem, ale poslúži nám na očistenie od malého množstva spoločností, ktoré účtovné závierky zverejňujú za obdobie inej dĺžky, kvôli čomu ich finančné údaje môžu mať mierne odlišný charakter.
+\end{enumerate}
+
+V pôvodných dátach sa nachádzalo celkovo \(3730\) firiem v úpadku s vyplneným dátumom konkurzného alebo reštrukturalizačného konania, z nich \(1145\) spĺňa podmienky 1 až 5.
+Všetky z týchto 1145 firiem zaradíme do finálnych dát ako firmy v bankrote.
+Uvedomme si, že úpadok budeme modelovať na základe dát za jeden rok (jedno účtovné obdobie), preto do finálneho datasetu zaradíme len dáta rok pred úpadkom firmy.
+V ďalšom kroku rozšírime tento dataset o prosperujúce firmy.
+
+\subsection{Prosperujúce firmy}
+
+Prosperujúcou firmou v tejto práci rozumieme firmu, ktorá za celé obdobie svojho pôsobenia nebola v konkurznom ani reštrukturalizačnom konaní, t.j. firmu, ktorá nebola v úpadku.
+Prosperujúcich je väčšina firiem na Slovensku a aby sme sa vyhli problému nevyvážených tried (angl. \emph{unbalanced classes}),
+na modelovanie rizika úpadku použijeme len časť z nich.
+Firmy zvolíme tak, že ku každej z \(1145\) firiem v úpadku z predošlého kroku dopárujeme jednu prosperujúcu firmu podobného charakteru.
+Podobná metodika je štandardom pri vytváraní bankrotných modelov – využil ju napr. aj Altmann pri vytváraní prvej verzie svojho Z-skóre – a jej výhodou je aj jej jednoduchosť a pochopiteľnosť, viď podkapitolu \ref{model interpretability}.
+
+Firmy, z ktorých sme vyberali dvojičku pre firmy v úpadku, museli okrem podmienok 1 až 5 z predošlej podkapitoly spĺňať aj nasledovné podmienky:
+
+\begin{enumerate}
+    \item Firma má tržby väčšie ako \(5000\) € a celkový majetok vyšší ako \(5000\) €.
+    \item Firma má vyplnené všetky finančné údaje, ktoré vstupujú do procesu vytvárania modelu (t.j. všetkých \(70\) finančných údajov, z ktorých len časť bude vystupovať vo finálnom modeli logistickej regresie).
+\end{enumerate}
+
+Podmienka 1 bola zvolená za účelom odseparovania firiem, ktoré sú neaktívne alebo príliš drobné.
+Hranicu \(5000\) € sme zvolili arbitrárne na základe analýzy veľkosti tržieb, z ktorej vyplynulo, že značná časť firiem má tržby blízke nule a nehodia sa na zaradenie do skupiny prosperujúcich firiem.
+
+Ku každej z \(1145\) firiem v úpadku sme priradili jednu prosperujúcu firmu tým spôsobom,
+že spomedzi prosperujúcich firiem pôsobiacich v odvetví s rovnakým SK NACE kódom sme zvolili firmu s čo najpodobnejšími tržbami rok pred úpadkom danej firmy.
+Pre \(6\) firiem počas obdobia rok pred ich úpadkom nepôsobila žiadna firma v odvetví s rovnakým SK NACE kódom, preto sme im priradili podobnú prosperujúcu firmu za iný rok.
+Pre jednu z týchto firiem neexistovala žiadna firma pôsobiaca v rovnakom odvetví, išlo o firmu s SK NACE kódom 08910 (Ťažba chemických a hnojivových minerálov).
+Tejto firme sme priradili firmu z podobného odvetvia s SK NACE kódom 08990 (Iná ťažba a dobývanie i.n.).
+
+Vo finálnom datasete máme dokopy \(2290\) firiem, z toho \(1145\) prosperujúcich a \(1145\) v úpadku.
+Pre účely modelovania a následného vyhodnocovania modelov sme tieto dáta rozdelili na trénovaciu, testovaciu a validačnú sadu v pomere \(60:20:20\),
+pričom v každej z nich bol pomer prosperujúcich firiem a firiem v úpadku \(50:50\).
+
+V ďalších častiach vytvoríme samotné modely logistickej regresie. Hlavným problémom je vyčlenenie najsignifikantnejších premenných pre predikciu bankrotu.
+
+\subsection{Model selection}
+
+Ku každej z \(2290\) firiem v našich dátach máme k dispozícii \(74\) finančných parametrov.
+Cieľom tejto práce je vytvoriť model, ktorý bude obsahovať ideálne len malý počet parametrov, viď podkapitolu \cite{model interpretability}.
+V tejto časti sa venujeme výberu najvhodnejšej kombinácie parametrov pre predikciu bankrotu.
+
+\subsubsection{Model LASSO}
+
+Prvou metódou, ktorú sme použili na výber najsignifikantnejších parametrov je \emph{lasso} (\emph{least absolute shrinkage and selection operator}).
+Metódu \emph{lasso} sme uprednostili pred inými metódami z podobnej triedy regularizácií (napr. pred \emph{ridge regression}) kvôli skutočnosti,
+že metóda \emph{lasso} má väčšiu tendenciu vynulovať parametre, ktoré považuje za nesignifikantné.
+(Napr. pri metóde \emph{ridge regression} parametre k nule len konvergujú.)
+Pripomíname, že naším cieľom je vytvoriť jednoduchý a interpretovateľný model.
+
+Cieľom metódy \emph{lasso} je nájsť parameter \(\hat{\beta}\) spĺňajúci
+
+\[
+    \hat{\beta} = \min_{\beta \in R^p} \left\{ \frac{1}{N} ||y - X \beta||_2^2 + \lambda || \beta ||_2^2 \right\}
+\]
+
+Parameter \(\lambda\) určuje stupeň regularizácie – pri vyšších hodnotách \(\lambda\) metóda vynuluje viac parametrov a naopak.
+Parameter \(\lambda\) je v metóde \emph{lasso} voľným parametrom, a jeho hodnota bola zvolená použitím krosvalidácie typu \emph{leave one out},
+teda pre testovaciu sadu veľkosti \(1832\) (\(916\) firiem v úpadku, \(916\) prosperujúcich) bolo vytvorených \(1832\) regresií,
+pričom pri každej bola vylúčená jedna firma, na ktorej sa daná regresia otestovala.
+
+Parametre, ktorým metóda \emph{lasso} pridelila nenulovú hodnotu (a teda ich zaradila do finálneho modelu logistickej regresie) je uvedený v tabuľke \ref{lasso tabulka vsetky parametre}.
+Parametrov s nenulovým koeficientom je \(14\).
+
+\begin{table}
+    \begin{tabular}{ |c|c| }
+        \hline
+        EBITDA & Čistý prevádzkový zisk po zdanení (NOPAT) \\
+        \hline
+        Čistý dlh & Záväzky/EBITDA \\
+        \hline
+        Celková zadlženosť & Likvidita 1. stupňa\\
+        \hline
+        Likvidita 3. stupňa & Finančné účty/Aktíva \\
+        \hline
+        Návratnosť aktív & Obrat aktív \\
+        \hline
+        Doba splácania záväzkov & INDEX 05 \\
+        \hline
+        Binkertov model & Spolu majetok (zmena v \%) \\
+        \hline
+    \end{tabular}
+    \caption{Zoznam signifikantných premenných podľa metódy \emph{lasso}}
+    \label{lasso tabulka vsetky parametre}
+\end{table}
+
+Dodatočnou analýzou sme množinu premenných v modeli okresali ešte viac.
+Premenné INDEX 05 a Binkertov model predstavujú hodnotenie finančnej kondície firmy inými modelmi, nepredstavujú teda rýdzo finančný údaj a do modelu sa nehodia.
+Premenné Likvidita 1. stupňa a Likvidita 3. stupňa sú vysoko korelované a vybrali sme z nich len Likviditu 3. stupňa,
+lebo tej priadil \(t\)-test signifikantnosti parametra výrazne nižšiu \(p\)-hodnotu a teda ju môžeme považovať za signifikantnejšiu premennú.
+
+Vylúčenie ďalších troch parametrov (EBITDA, Čistý prevádzkový zisk po zdanení, a Čistý dlh) vyplynulo z ďalšej analýzy,
+pri ktorej sme skúmali výstupy modelu pre širšiu množinu firiem, mimo trénovacej a testovacej sady.
+Tieto tri premenné sú hodnoty v eurách a tým, že pri veľkých firmách nadobúdajú tieto hodnoty extrémne veľkosti,
+malo to za následok to, že veľkým firmám dávala logistická regresia výstup blízky k \(0\) alebo k \(1\).
+Hodnotenia scoringovými modelmi sú často zaujímavé práve pre väčšie firmy, preto sme považovali za vhodnejšie, ak ich hodnotenia budú tvoriť širšie spektrum hodnôt.
+Dodatočnú analýzu možného spracovania premenných s extrémnymi hodnotami (napr. zlogaritmovaním) sme nevykonali.
+
+Ďalšie dve premenné, Obrat aktív a Spolu majetok (zmena v \%), sme vylúčili, pretože \(t\)-test signifikantnosti parametra zamietol ich významnosť na hladine \(\alpha = 0.05\).
+Konečnú skupinu šiestich premenných, ktoré vstupujú do modelu vytvoreného pomocou metódy \(lasso\), uvádzame spolu s ich koeficientami v tabuľke \ref{lasso tabulka konecne parametre}.
+
+\begin{table}
+    \begin{tabular}{ |c|c| }
+        \hline
+        Premenná & Koeficient \\
+        \hline
+        Intercept & -0.654131192998752 \\
+        \hline
+        Záväzky/EBITDA & -0.00184363389130676 \\
+        \hline
+        Celková zadlženosť & 0.733674242100195 \\
+        \hline
+        Likvidita 3. stupňa & -0.0603034169898139 \\
+        \hline
+        Finančné účty/Aktíva & -3.10194708872789 \\
+        \hline
+        Návratnosť aktív & -1.84060110234586 \\
+        \hline
+        Doba splácania záväzkov & 0.00000199016251427634 \\
+        \hline
+    \end{tabular}
+    \caption{Konečný zoznam signifikantných premenných podľa metódy \emph{lasso} spolu s ich koeficientami}
+    \label{lasso tabulka konecne parametre}
+\end{table}
+
+Koeficienty boli spočítané novým natrénovaním modelu na trénovacej sade,
+metódu \emph{lasso} sme teda využili len pri skúmaní signifikantnosti jednotlivých premenných.
+Vzorec pre výpočet skóre týmto modelom má nasledovný tvar:
+
+\[
+    {score}_{lasso} = \frac{1}{1 - e^{-0.65413 - 0.00184X_1 + 0.73367X_2 + -0.06030X_3 - 3.10194X_4 - 1.84060X_5 + 0.000002X_6}}
+\]
+
+kde
+
+\(X_1 = \) Záväzky/EBITDA
+
+\(X_2 = \) Celková zadlženosť
+
+\(X_3 = \) Likvidita 3. stupňa
+
+\(X_4 = \) Finančné účty/Aktíva
+
+\(X_5 = \) Návratnosť aktív
+
+\(X_6 = \) Doba splácania záväzkov.
+
+\subsubsection{Modely BACE}
+
+V ďalšej časti budeme hľadať vhodnú kombináciu premenných modelu predikcie bankrotu metódou \emph{BACE} (\emph{bayesian averaging of classical estimates}).
+Metóda \emph{BACE} patrí k heuristickým metódam, ku ktorým možno pristupovať rôznymi spôsobmi, my využijeme dva rôzne prístupy.
+Prvý prístup bude replikáciou metodiky využitej v práci \cite{ondrusekova}, v ktorej autorka enumerovala všetky modely logistickej regresie so \(4\), \(5\) a \(6\) parametrami
+a z ich výstupov spočítala bayesovské odhady parametra \(\beta\) a jeho aposteriórnu pravdepodobnosť.
+Táto práca, rovnako ako naša, sa zaoberala problematikou predikcie bankrotu v slovenskom prostredí.
+
+Druhý prístup k metóde \emph{BACE} vychádza z článku \cite{sala-i-martin}, v ktorom bola metóda \emph{BACE} prvýkrát opísaná.
+Pôvodná metóda \emph{BACE} predstavuje algoritmus, ktorý náhodne volí veľké množstvo regresií z množiny regresií so všetkými možnými kombináciami vysvetľujúcich premenných,
+až do momentu, kým odhady parametra \(\beta\) neskonvergujú.

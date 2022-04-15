@@ -23,6 +23,7 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{enumitem}
+\usepackage{longtable}
 
 \usepackage[toc,page]{appendix}
 
@@ -116,22 +117,25 @@ plainpages=false
     \newpage  
     \input{07 kap4}
 
+    \newpage  
+    \input{07 kap5}
+
 	\newpage
   \section*{Záver}
     \addcontentsline{toc}{section}{Záver}
     \markboth{ZÁVER}{ZÁVER} 
-    \input{12 Zaver}
+    \input{08 Zaver}
   
   \newpage
   \renewcommand{\refname}{Zoznam použitej literatúry}
-  \input{13 Literatura}
+  \input{09 Literatura}
   
-% 	\newpage
-%   \appendix
-%   \section*{Príloha A} 
-%     \label{appendix:a}
-%     \addcontentsline{toc}{section}{Príloha A}
-%     \markboth{Príloha A}{Príloha A}
-%     \input{14 AppendixA}
+	\newpage
+  \appendix
+  \section*{Príloha A} 
+    \label{appendix:a}
+    \addcontentsline{toc}{section}{Príloha A}
+    \markboth{Príloha A}{Príloha A}
+    \input{10 AppendixA}
 
 \end{document}

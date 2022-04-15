@@ -18,7 +18,61 @@ Známe sú aj modely vytvorené pomocou dát o slovenských a českých firmách
 
 \subsection{Altmanovo Z-skóre}
 
-TODO
+Altmanovo \(Z\)-skóre patrí historicky k najznámejším a najpoužívanejším modelom predikcie bankrotu.
+Prvá verzia \(Z\)-skóre bola vytvorená na vzorke \(66\) verejne obchodovateľných firiem, \(33\) prosperujúcich a \(33\) v úpadku\cite{altman1968}.
+Išlo o model viacrozmernej diskriminačnej analýzy
+\footnote{v anglickej literatúre sa o metóde využitej pri Altmanovom modeli hovorí ako o \emph{multivariate discriminant analysis} (MDA)}
+s \(5\) premennými predstavujúcimi finančné údaje o firme.
+Vzorku 33 prosperujúcich firiem zvolil Altman tak, že ku každej z \(33\) firiem v úpadku zvolil firmu podobnej veľkosti pôsobiacu v rovnakom odvetví ako daná firma v úpadku.
+Pri vzorke firiem v úpadku používal údaje jeden rok pred vyhlásením bankrotu, pri dopárovaných prosperujúcich firmách používal údaje z toho istého roku.
+
+Pôvodná verzia \(Z\)-skóre pracovala s trhovou hodnotou firmy, ktorá je dostupná len pre verejne obchodovateľné spoločnosti. Jej tvar je nasledovný:
+
+\[
+    Z = 0.012X_1 + 0.014X_2 + 0.033X_3 + 0.006X_4 + 0.999X_5
+\]
+
+kde
+
+\(X_1 = \) pracovný kapitál / aktíva
+
+\(X_2 = \) výsledok hospodárenia minulých rokov (TODO, alebo nerozdelený zisk, angl. retained earnings) / aktíva
+
+\(X_3 = \) EBIT\footnote{zisk pred zdanením a úrokmi (angl. \emph{earnings before interest and taxes})} / aktíva
+
+\(X_4 = \) trhová hodnota / celkové záväzky
+
+\(X_5 = \) tržby / aktíva.
+
+Podľa modelu je spoločnosť v prosperujúcej zóne, ak \(Z > 2.99\), a v úpadku, ak \(Z < 1.81\).
+Interval \([1.81, 2.99]\) nazývame „šedou“ zónou – ak má firma hodnotu \(Z\) v danom intervale, model firmu jednoznačne nezaraďuje do žiadnej z dvoch skupín
+(prosperujúca firma alebo firma v úpadku).
+
+Ako bolo zdôraznené v \cite{altman1983}, pôvodné \(Z\)-skóre bolo vytvorené na vzorke verejne obchodovateľných spoločností a je aplikovateľné len na tento typ firiem.
+Pokusom o \emph{ad hoc} modifikáciu modelu (napr. nahradením trhovej hodnoty vlastným imaním) chýbala vedecká exaktnosť.
+V roku 1983 vytvoril Altman novú verziu \(Z\)-skóre, aplikovateľnú aj na súkromné spoločnosti, v tvare:
+
+\[
+    Z = 0.717X_1 + 0.847X_2 + 3.107X_3 + 0.420X_4 + 0.998X_5
+\]
+
+kde \(X_4 = \) trhová hodnota / celkové záväzky, a ostatné premenné majú rovnaký význam ako v pôvodnom \(Z\)-skóre z roku 1968.
+
+Hranice intervalov pre modifikované \(Z\)-skóre sú:
+
+\( Z > 2.9\) – prosperujúca zóna
+
+\( Z \in [1.2, 2.9]\) – šedá zóna
+
+\( Z < 1.2 \) – zóna úpadku
+
+Keďže väčšina firiem na Slovensku je v súkromnom vlastníctve, v slovenskom prostredí sa využíva hlavne verzia Altmanovho skóre z roku 1983.
+Presnosť modelov vytvorených v tejto práci budeme porovnávať práve s touto verziou \(Z\)-skóre.
+
+Aj autor \(Z\)-skóre Edward Altman uznal, že presnosť jeho modelu bola prekonaná inými, konkurenčnými modelmi\cite{altman2017}, napriek tomu však \(Z\)-skóre patrí medzi najpoužívanejšie modely predikcie bankrotu.
+Dôvodmi pre túto skutočnosť sú zrejme jednoduchosť a ľahká interpretovateľnosť jeho vzorca a dostatočne vysoká presnosť modelu v globálnom prostredí
+(v \cite{altman2017} Altman ukazuje, že presnosť klasifikácie pre väčšinu krajín je vyššia než približne \(0.75\)).
+
 
 \subsection{Index IN05}
 
