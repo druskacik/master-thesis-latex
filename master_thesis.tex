@@ -13,12 +13,15 @@
 
 \usepackage{graphicx,amsmath,amssymb, amsthm, multicol}
 \usepackage{pdfpages}
+\usepackage{float}
 
 \usepackage[nottoc]{tocbibind}
 \usepackage{mathrsfs}
 \usepackage{psfrag}
 \usepackage[small,bf]{caption}
 \usepackage{ifthen}
+\usepackage{titlesec}
+\usepackage{makecell}
 
 \usepackage{xcolor}
 \usepackage{listings}
@@ -76,13 +79,18 @@ plainpages=false
 
 \setcounter{MaxMatrixCols}{20}
 
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
 \begin{document}
 
   \input{01 Titulka}
 
   \input{02 Thesis_info}
 
-%   \includepdf[pages={1}, offset=25 -75]{zadanieRD.pdf}
+  \includepdf[pages={1}, offset=25 -75]{zadanieRD.pdf}
 
   \input{03 Podakovanie}
 
@@ -120,6 +128,9 @@ plainpages=false
     \newpage  
     \input{07 kap5}
 
+    \newpage  
+    \input{07 kap6}
+
 	\newpage
   \section*{Záver}
     \addcontentsline{toc}{section}{Záver}
@@ -137,5 +148,26 @@ plainpages=false
     \addcontentsline{toc}{section}{Príloha A}
     \markboth{Príloha A}{Príloha A}
     \input{10 AppendixA}
+
+  \newpage
+  \section*{Príloha B} 
+    \label{appendix:b}
+    \addcontentsline{toc}{section}{Príloha B}
+    \markboth{Príloha B}{Príloha B}
+    \input{10 AppendixB}
+
+  \newpage
+  \section*{Príloha C} 
+    \label{appendix:c}
+    \addcontentsline{toc}{section}{Príloha C}
+    \markboth{Príloha C}{Príloha C}
+    \input{10 AppendixC}
+
+    \newpage
+  \section*{Príloha D - Výpočtové aspekty iteračnej metódy \emph{BACE}} 
+    \label{appendix:d}
+    \addcontentsline{toc}{section}{Príloha D}
+    \markboth{Príloha C}{Príloha D}
+    \input{10 AppendixD}
 
 \end{document}

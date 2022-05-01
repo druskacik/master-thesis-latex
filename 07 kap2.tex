@@ -76,4 +76,33 @@ Dôvodmi pre túto skutočnosť sú zrejme jednoduchosť a ľahká interpretovat
 
 \subsection{Index IN05}
 
-TODO
+INDEX IN05 je český model slúžiaci na ohodnotenie finančného zdravia spoločnosti.
+Model patrí do rodiny bonitných indexov IN vytvorených manželmi Neumaierovými, pričom index IN05 je najnovší z nich a pochádza z roku 2005.
+Podobne ako Altmanovo Z-skóre, tento model vznikol na základe diskriminačnej analýzy. Diskriminačná funkcia indexu IN05 má tvar:
+
+\[
+    \text{IN05} = 0.13X_1 + 0.04X_2 + 3.97X_3 + 0.21X_4 + 0.09X_5
+\]
+
+kde
+
+\(X_1 = \) aktíva / cudzie zdroje
+
+\(X_2 = \) EBIT / nákladové úroky
+
+\(X_3 = \) EBIT / aktíva
+
+\(X_4 = \) výnosy / aktíva
+
+\(X_5 = \) obežné aktíva / (krátkodobé závazky + bežné bankové úvery).
+
+Hranice intervalov pre hodnoty indexu IN05 sú:
+
+\( \text{IN05} > 1.6\) – prosperujúca zóna
+
+\( \text{IN05} \in [0.9, 1.6]\) – šedá zóna
+
+\( \text{IN05} < 0.9 \) – zóna úpadku.
+
+Podľa publikácie \cite{sav} má pri identifikácii bankrotu index IN05 úspešnosť \(77 \%\), ktorá bola nameraná na vzorke \( 1526 \) českých podnikov.
+

@@ -163,7 +163,7 @@ metódu \emph{lasso} sme teda využili len pri skúmaní signifikantnosti jednot
 Vzorec pre výpočet skóre týmto modelom má nasledovný tvar:
 
 \[
-    {score}_{lasso} = \frac{1}{1 - e^{-0.65413 - 0.00184X_1 + 0.73367X_2 + -0.06030X_3 - 3.10194X_4 - 1.84060X_5 + 0.000002X_6}}
+    \text{score}_\text{lasso} = \frac{1}{1 + e^{-0.65413 - 0.00184X_1 + 0.73367X_2 - 0.06030X_3 - 3.10194X_4 - 1.84060X_5 + 0.000002X_6}}
 \]
 
 kde
@@ -191,3 +191,150 @@ Táto práca, rovnako ako naša, sa zaoberala problematikou predikcie bankrotu v
 Druhý prístup k metóde \emph{BACE} vychádza z článku \cite{sala-i-martin}, v ktorom bola metóda \emph{BACE} prvýkrát opísaná.
 Pôvodná metóda \emph{BACE} predstavuje algoritmus, ktorý náhodne volí veľké množstvo regresií z množiny regresií so všetkými možnými kombináciami vysvetľujúcich premenných,
 až do momentu, kým odhady parametra \(\beta\) neskonvergujú.
+
+\paragraph{Metóda kompletnej enumerácie}
+
+Jediná apriórna informácia, ktorú pri metóde \emph{BACE} vkladáme do výpočtovej procedúry, je očakávaný počet parametrov vo výslednom modeli \( \bar{k} \).
+V našom prípade sme zvolili \( \bar{k} = 5 \) na základe niekoľkých skutočností: \(5\) parametrov majú aj zaužívané modely ako Altmanovo Z-skóre či INDEX 05,
+a \(5\) parametrov sa ukázalo byť signifikantných (použitím metódy \emph{BACE}) aj v práci \cite{ondrusekova}, ktorú replikujeme.
+Zároveň, podľa \cite{sala-i-martin} aj \cite{polaci} malá zmena hodnoty khat nemá veľký vplyv na výstupy metódy \emph{BACE}.
+Na základe uvedených skutočností sme usúdili, že voľba \( \bar{k} = 5 \) je pre náš prípad adekvátna.
+Dôležitejšie ako konkrétna zvolená hodnota khat je fakt, že \( \bar{k} \) sa pohybuje v nízkych hodnotách a je rádovo menšia oproti celkovému počtu parametrov \( K = 74 \).
+
+V prvej implementácii metódy \emph{BACE} sme kompletne enumerovali všetky modely s \(5\) premennými, zvolenými z celkového počtu \(74\) premenných.
+Takých modelov je celkovo \(\binom{74}{5} = 16108764\), z tejto množiny sme však vylúčili tie modely, ktoré obsahovali vysoko korelované (resp. závislé) premenné.
+Zoznam skupín závislých premenných uvádzame v prílohe \hyperref[appendix:b]{B}. 
+Po vylúčení modelov s korelovanými premennými nám ostalo \(12774840\) modelov, ktoré sme všetky enumerovali.
+
+Po enumerácii koeficientov modelov a ich BIC sme dopočítali aposteriórne pravdepodobnosti modelov a premenných.
+Kompletný zoznam premenných s ich apriórnymi a aposteriórnymi pravdepodobnosťami, pri použití metódy BACE prístupom kompletnej enumerácie, uvádzame v prílohe \hyperref[appendix:c]{C}.
+V tabuľke \ref{bace1 tabulka pp} uvádzame len tie premenné, ktorých spočítaná aposteriórna pravdepodobnosť zahrnutia bola vyššia ako ich apriórna pravdepodobnosť zahrnutia.
+Takých premenných bolo celkovo \(7\).
+Uvedomme si, že apriórna pravdepodobnosť zahrnutia premenných nebola v tomto prípade vždy rovná presne \(\frac{5}{74}\),
+pretože niektoré modely s \(5\) premennými sme vylúčili, čo malo za následok miernu zmenu hodnoty apriórnej pravdepodobnosti zahrnutia niektorých premenných.
+
+\begin{table}
+    \begin{tabular}{ |c|c|c| }
+        \hline
+        Premenná & \makecell{Apriórna \\ pravdepodobnosť} & \makecell{Aposteriórna \\ pravdepodobnosť} \\
+        \hline
+        Čistý prevádzkový zisk po zdanení (NOPAT) & 5.9 \% & 98.5 \% \\
+        \hline
+        Celková zadlženosť & 6.2 \% & 22.8 \% \\
+        \hline
+        Stupeň samofinancovania & 6.2 \% & 77.2 \% \\
+        \hline
+        Finančné účty/Aktíva & 7.4 \% & 100 \% \\
+        \hline
+        Návratnosť aktív & 6.6 \% & 86.2 \%\\
+        \hline
+        Návratnosť aktív (EBIT) & 6.6 \% & 13.8 \% \\
+        \hline
+        Doba splácania záväzkov z obchodného styku & 6.6 \% & 100 \% \\
+        \hline
+    \end{tabular}
+    \caption{Konečný zoznam signifikantných premenných podľa metódy \emph{BACE} (kompletná enumerácia modelov s \(5\) premennými) spolu s ich apriórnymi a aposteriórnymi pravdepodobnosťami}
+    \label{bace1 tabulka pp}
+\end{table}
+
+Dodatočnou analýzou sme pre výsledný model vylúčili \(2\) z týchto \(7\) premenných, \emph{Čistý prevádzkový zisk po zdanení} z rovnakých dôvodov,
+z akých sme túto premennú vylúčili pri modeli \emph{lasso}, \emph{Návratnosť aktív (EBIT)} z dôvodu,
+že z dvojice vysoko korelovaných premenných spolu s premennou \emph{Návratnosť aktív} mala \emph{Návratnosť aktív (EBIT)} nižšiu aposteriórnu pravdepodobnosť.
+
+Výsledný model bol spočítaný opätovným natrénovaním modelu na trénovacej sade, pri zahrnutí piatich premenných.
+Koeficienty pri premenných uvázame v tabuľke ... .
+
+\begin{table}
+    \begin{tabular}{ |c|c| }
+        \hline
+        Premenná & Koeficient \\
+        \hline
+        Intercept & -0.763142502413478 \\
+        \hline
+        Celková zadlženosť & 0.706595273475482 \\
+        \hline
+        Stupeň samofinancovania & -0.0477059620445649 \\
+        \hline
+        Finančné účty/Aktíva & -3.20026599445248 \\
+        \hline
+        Návratnosť aktív & -1.86370009476635 \\
+        \hline
+        Doba splácania záväzkov z obchodného styku & 0.0000653621336106666 \\
+        \hline
+    \end{tabular}
+    \caption{Konečný zoznam signifikantných premenných podľa metódy \emph{BACE} (kompletná enumerácia modelov s \(5\) premennými) spolu s ich koeficientami}
+    \label{bace1 tabulka konecne parametre}
+\end{table}
+
+Vzorec pre výpočet skóre týmto modelom má nasledovný tvar:
+
+\[
+    \text{score}_\text{BACE1} = \frac{1}{1 + e^{-0.76314 + 0.7066X_1 - 0.0477X_2 - 3.20027X_3 - 1.8637X_4 - 1.84060X_5 + 0.000065X_6}}
+\]
+
+kde
+
+\(X_1 = \) Celková zadlženosť
+
+\(X_2 = \) Stupeň samofinancovania
+
+\(X_3 = \) Finančné účty/Aktíva
+
+\(X_4 = \) Návratnosť aktív
+
+\(X_5 = \) Doba splácania záväzkov z obchodného styku.
+
+\paragraph{Iteračná metóda}
+
+V druhej implementácii metódy BACE vychádzame z pôvodného článku \cite{sala-i-martin}.
+Pri tomto prístupe zvolíme apriórne pravdepodobnosti jednotlivých vysvetľujúcich premenných a budeme náhodne generovať modely logistických regresií,
+až kým odhady stredných hodnôt jednotlivých premenných neskonvergujú.
+Hodnota apriórnej pravdepodobnosti premenných vychádza, podobne ako v predošlej metóde, z očakávaného počtu premenných vo výslednom modeli.
+Opäť sme zvolili očakávaný počet premenných kbar = 5, z čoho vyplýva apriórna pravdepodobnosť zahrnutia pre premenné \( \frac{5}{74} = 0.0676 \).
+
+Okrem apriórnych pravdepodobností jednotlivých premenných má táto procedúra niekoľko hyperparametrov.
+Prístup, ktorý sme zvolili, je podobný prístupu z článku \cite{sala-i-martin}, a je nasledovný:
+každých \(10000\) iterácií spočítame odhady stredných hodnôt koeficientov pri jednotlivých vysvetľujúcich premenných podľa vzorca TODO,
+a keď \(20\)-krát po sebe zmena odhadu stredných hodnôt koeficientov, prenásobených disperziou hodnôt danej premennej v trénovacej sade \(X\),
+nepresiahne \(10^{-6}\), algoritmus skončí.
+V článku \cite{sala-i-martin} pracujú autori so zastavovacím pravidlom, kedy na prehlásenie konvergencie stačí,
+keď sa hodnota koeficientu pri každej z premenných nezmení po \(10000\) iteráciách \(6\)-krát po sebe.
+V našom prípade sme zvolili prísnejšie pravidlo, pretože pracujeme s väčšou množinou potenciálnych vysvetľujúcich premenných
+(je ich \(74\), v článku \cite{sala-i-martin} ich bolo \(32\)).
+
+Ďalším rozdielom je to, že v článku \cite{sala-i-martin} použili autori apriórnu pravdepodobnosť zahrnutia \( \bar{k}/K \) len pre prvých \(100000\) modeloch,
+pri ďalších modeloch používali pri náhodnom výbere odhady aposteriórnych pravdepodobností premenných na základe tejto vzorky \(100000\) modelov
+(pričom ich ale ohraničili intervalom \([0.1, 0.85]\)).
+Dôvodom bola skutočnosť, že pri takomto prístupe konverguje algoritmus rýchlejšie.
+V našej práci sme pre zachovanie jednoduchosti túto metódu nepoužili.
+Podobný prístup si vyžaduje voľbu viacerých hyperparametrov, ktoré majú viacmenej arbitrárny charakter, a tým by si sa celý proces skomplikoval.
+Navyše, algoritmus by mal skonvergovať pri akejkoľvek voľbe apriórnych pravdepodobností.
+
+Na implementáciu iteračnej metódy \emph{BACE} sme použili softvér \emph{R}, výpočtovým aspektom metódy sa venujeme bližšie v prílohe \hyperref[appendix:d]{D}.
+
+Algoritmus skonvergoval po [TODO] iteráciách.
+V tabuľke [TODO] uvádzame aposteriórne pravdepodobnosti zahrnutia a odhady stredných hodnôt koeficientov pre tie premenné,
+pre ktoré aposteriórna pravdepodobnosť bola vyššia ako ich apriórna pravdepodobnosť zahrnutia. Kompletný zoznam premenných uvádzame v prílohe E (TODO).
+
+TODO: tabulka
+
+Výsledný model logistickej regresie vytvorený touto metódou je daný vzorcom:
+
+TODO: vzorec
+
+\subsection{Porovnanie modelov}
+
+\begin{tikzpicture}
+    \begin{axis}[
+      title={ROC krivky},
+      xlabel={\(1 -\) špecificita (\emph{false positive rate})},
+      ylabel={senzitivita (\emph{true positive rate})},
+      legend pos=outer north east,
+    ]
+    \addplot [blue] table [x=V1, y=V2, col sep=comma] {data/roc_altman.csv};
+    \addlegendentry{Altmanovo Z-skóre}
+
+    \addplot [red] table [x=V1, y=V2, col sep=comma] {data/roc_index.csv};
+    \addlegendentry{Index IN05}
+    \end{axis}
+\end{tikzpicture}
