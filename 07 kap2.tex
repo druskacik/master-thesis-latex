@@ -1,11 +1,11 @@
 \section{Známe bankrotné modely}
 
 Riziko úpadku podnikov sa modeluje už desiatky rokov.
-Za jeden z prvých formálnych pokusov o štatistickú analýzu úpadku podnikov je považovaná štúdia FitzPatricka z roku 1932,
+Za jeden z prvých formálnych pokusov o štatistickú analýzu úpadku podnikov je považovaná štúdia FitzPatricka z roku 1932 \cite{fitzpatrick},
 v ktorej autor pracoval s dátami o 40 firmách (20 v úpadku, 20 zdravých).
 Výsledkom FitzPatrickovej štúdie nebol model rizika úpadku, ale analýza jednotlivých finančných ukazovateľov a ich trendov pri prosperujúcich a neprosperujúcich firmách.
 
-Formálnejšie pokusy o modelovanie rizika úpadku firiem začali v 60. rokoch, kedy vznikli napr. modely Beavera, Tamariho, alebo Altmana,
+Formálnejšie pokusy o modelovanie rizika úpadku firiem začali v 60. rokoch, kedy vznikli napr. modely Beavera \cite{beaver}, Tamariho \cite{tamari}, alebo Altmana \cite{altman1968},
 ktorého Z-skóre vytvorené metódou diskriminačnej analýzy patrí dodnes medzi najpoužívanejšie modely kreditného rizika.
 Diskriminačná analýza prevažovala vrámci metód používaných na modelovanie úpadku podnikov až do 80. rokov, kedy ju nahradili metódy,
 ktoré majú menej matematických požiadaviek na dáta, ako napr. logistická regresia alebo \emph{probit model} \cite{gruszczynski}.
@@ -14,14 +14,15 @@ Rozmach moderných technológií, výpočtovej techniky, a ľahší prístup k d
 V literatúre vieme nájsť modely neurónovej siete, hazardné modely, metódu oporného bodu (SVM) atď. (TODO: nájdi viac príkladov aj so zdrojom)
 
 Známe sú aj modely vytvorené pomocou dát o slovenských a českých firmách, napr. bonitné indexy IN vytvorené manželmi Neumaierovými na dátach o českých firmách,
-či Binkertov model a model Martina Gulku zo slovenského prostredia. Na tému analýzy kreditného rizika firiem tiež vzniklo niekoľko záverečných prác na FMFI UK \cite{ondrusekova, bohdal}.
+či Binkertov model \cite{zalai} slovenského prostredia.
+Na tému analýzy kreditného rizika firiem tiež vzniklo niekoľko záverečných prác na FMFI UK \cite{ondrusekova, bohdal}.
 
 \subsection{Altmanovo Z-skóre}
 
 Altmanovo \(Z\)-skóre patrí historicky k najznámejším a najpoužívanejším modelom predikcie bankrotu.
-Prvá verzia \(Z\)-skóre bola vytvorená na vzorke \(66\) verejne obchodovateľných firiem, \(33\) prosperujúcich a \(33\) v úpadku\cite{altman1968}.
+Prvá verzia \(Z\)-skóre bola vytvorená na vzorke \(66\) verejne obchodovateľných firiem, \(33\) prosperujúcich a \(33\) v úpadku \cite{altman1968}.
 Išlo o model viacrozmernej diskriminačnej analýzy
-\footnote{v anglickej literatúre sa o metóde využitej pri Altmanovom modeli hovorí ako o \emph{multivariate discriminant analysis} (MDA)}
+\footnote{V anglickej literatúre sa o metóde využitej pri Altmanovom modeli hovorí ako o \emph{multivariate discriminant analysis} (MDA).}
 s \(5\) premennými predstavujúcimi finančné údaje o firme.
 Vzorku 33 prosperujúcich firiem zvolil Altman tak, že ku každej z \(33\) firiem v úpadku zvolil firmu podobnej veľkosti pôsobiacu v rovnakom odvetví ako daná firma v úpadku.
 Pri vzorke firiem v úpadku používal údaje jeden rok pred vyhlásením bankrotu, pri dopárovaných prosperujúcich firmách používal údaje z toho istého roku.
@@ -29,20 +30,21 @@ Pri vzorke firiem v úpadku používal údaje jeden rok pred vyhlásením bankro
 Pôvodná verzia \(Z\)-skóre pracovala s trhovou hodnotou firmy, ktorá je dostupná len pre verejne obchodovateľné spoločnosti. Jej tvar je nasledovný:
 
 \[
-    Z = 0.012X_1 + 0.014X_2 + 0.033X_3 + 0.006X_4 + 0.999X_5
+    Z = 0.012X_1 + 0.014X_2 + 0.033X_3 + 0.006X_4 + 0.999X_5,
 \]
 
 kde
 
-\(X_1 = \) pracovný kapitál / aktíva
+\(X_1 = \) pracovný kapitál / aktíva,
 
-\(X_2 = \) výsledok hospodárenia minulých rokov (TODO, alebo nerozdelený zisk, angl. retained earnings) / aktíva
+\(X_2 = \) výsledok hospodárenia minulých rokov (TODO, alebo nerozdelený zisk, angl. retained earnings) / aktíva,
 
-\(X_3 = \) EBIT\footnote{zisk pred zdanením a úrokmi (angl. \emph{earnings before interest and taxes})} / aktíva
+\(X_3 = \) EBIT\footnote{zisk pred zdanením a úrokmi (angl. \emph{earnings before interest and taxes})} / aktíva,
 
-\(X_4 = \) trhová hodnota / celkové záväzky
+\(X_4 = \) trhová hodnota / celkové záväzky,
 
 \(X_5 = \) tržby / aktíva.
+\bigskip
 
 Podľa modelu je spoločnosť v prosperujúcej zóne, ak \(Z > 2.99\), a v úpadku, ak \(Z < 1.81\).
 Interval \([1.81, 2.99]\) nazývame „šedou“ zónou – ak má firma hodnotu \(Z\) v danom intervale, model firmu jednoznačne nezaraďuje do žiadnej z dvoch skupín
@@ -53,18 +55,19 @@ Pokusom o \emph{ad hoc} modifikáciu modelu (napr. nahradením trhovej hodnoty v
 V roku 1983 vytvoril Altman novú verziu \(Z\)-skóre, aplikovateľnú aj na súkromné spoločnosti, v tvare:
 
 \[
-    Z = 0.717X_1 + 0.847X_2 + 3.107X_3 + 0.420X_4 + 0.998X_5
+    Z = 0.717X_1 + 0.847X_2 + 3.107X_3 + 0.420X_4 + 0.998X_5,
 \]
 
 kde \(X_4 = \) trhová hodnota / celkové záväzky, a ostatné premenné majú rovnaký význam ako v pôvodnom \(Z\)-skóre z roku 1968.
 
 Hranice intervalov pre modifikované \(Z\)-skóre sú:
 
-\( Z > 2.9\) – prosperujúca zóna
+\( Z > 2.9\) – prosperujúca zóna,
 
-\( Z \in [1.2, 2.9]\) – šedá zóna
+\( Z \in [1.2, 2.9]\) – šedá zóna,
 
-\( Z < 1.2 \) – zóna úpadku
+\( Z < 1.2 \) – zóna úpadku.
+\bigskip
 
 Keďže väčšina firiem na Slovensku je v súkromnom vlastníctve, v slovenskom prostredí sa využíva hlavne verzia Altmanovho skóre z roku 1983.
 Presnosť modelov vytvorených v tejto práci budeme porovnávať práve s touto verziou \(Z\)-skóre.
@@ -76,33 +79,35 @@ Dôvodmi pre túto skutočnosť sú zrejme jednoduchosť a ľahká interpretovat
 
 \subsection{Index IN05}
 
-INDEX IN05 je český model slúžiaci na ohodnotenie finančného zdravia spoločnosti.
-Model patrí do rodiny bonitných indexov IN vytvorených manželmi Neumaierovými, pričom index IN05 je najnovší z nich a pochádza z roku 2005.
+Index IN05 (viď \cite{neumaier1}) je český model slúžiaci na ohodnotenie finančného zdravia spoločnosti.
+Model patrí do skupiny bonitných indexov IN vytvorených manželmi Neumaierovými, pričom index IN05 je najnovší z nich a pochádza z roku 2005.
 Podobne ako Altmanovo Z-skóre, tento model vznikol na základe diskriminačnej analýzy. Diskriminačná funkcia indexu IN05 má tvar:
 
 \[
-    \text{IN05} = 0.13X_1 + 0.04X_2 + 3.97X_3 + 0.21X_4 + 0.09X_5
+    \text{IN05} = 0.13X_1 + 0.04X_2 + 3.97X_3 + 0.21X_4 + 0.09X_5,
 \]
 
 kde
 
-\(X_1 = \) aktíva / cudzie zdroje
+\(X_1 = \) aktíva / cudzie zdroje,
 
-\(X_2 = \) EBIT / nákladové úroky
+\(X_2 = \) EBIT / nákladové úroky,
 
-\(X_3 = \) EBIT / aktíva
+\(X_3 = \) EBIT / aktíva,
 
-\(X_4 = \) výnosy / aktíva
+\(X_4 = \) výnosy / aktíva,
 
 \(X_5 = \) obežné aktíva / (krátkodobé závazky + bežné bankové úvery).
+\bigskip
 
 Hranice intervalov pre hodnoty indexu IN05 sú:
 
-\( \text{IN05} > 1.6\) – prosperujúca zóna
+\( \text{IN05} > 1.6\) – prosperujúca zóna,
 
-\( \text{IN05} \in [0.9, 1.6]\) – šedá zóna
+\( \text{IN05} \in [0.9, 1.6]\) – šedá zóna,
 
 \( \text{IN05} < 0.9 \) – zóna úpadku.
+\bigskip
 
 Podľa publikácie \cite{sav} má pri identifikácii bankrotu index IN05 úspešnosť \(77 \%\), ktorá bola nameraná na vzorke \( 1526 \) českých podnikov.
 

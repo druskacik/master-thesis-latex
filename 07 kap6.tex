@@ -19,27 +19,27 @@ Dôsledkami nevyváženosti dát pre problematiku predikcie bankrotu sa venujeme
 
 \subsection{„Biases“}
 
-Modely predikcie bankrotu sa spravidla modelujú na nenáhodných vzorkách dát, čo má za následok  prítomnosť tzv. \emph{sample-choice bias}
+Modely predikcie bankrotu sa spravidla odhadujú na nenáhodných vzorkách dát, čo má za následok  prítomnosť tzv. \emph{sample-choice bias}
 („zaujatosť“ modelu vznikajúcu následkom toho, že model vznikol práve na základe tej danej trénovacej sady dát, a nie inej).
 Nenáhodnosť v dátach vzniká vtedy, keď zaradenie či nezaradenie danej firmy do trénovacej vzorky nie je skutočne náhodné, ale závisí od samotných hodnôt vysvetľovaných premenných
 (napr. keď sa prosperujúce firmy vyberajú na základe podobnosti k firmám v bankrote) alebo je podmienené tým, že dáta pre danú firmu sú kompletné
 (t.j. do trénovacej vzorky nezaraďujeme firmy, ku ktorým chýbajú niektoré údaje, čo v prípade finančných dát nie je výnimočný jav).
 
 Z uvedeného vyplýva, že aj trénovacia vzorka, s ktorou sme pracovali v tejto práci, je v skutočnosti nenáhodná.
-Spomeňme si, že firmy v bankrote sme do trénovacej vzorky (resp. do vzorky, z ktorej sme následne náhodne vybrali 80 \% dát) zaradili všetky (po očistení nehodiacich sa prvkov),
+Spomeňme si, že firmy v bankrote sme do trénovacej vzorky (resp. do vzorky, z ktorej sme následne náhodne vybrali 80 \% dát) zaradili všetky\footnote{po očistení nehodiacich sa prvkov},
 a prosperujúce firmy sme zvolili „párovacou“ metódou (angl. \emph{matched-pairs sample design}) na základe podobnosti odvetvia a tržieb.
 Navyše, množina prosperujúcich firiem, v ktorej sme k firmám v bankrote hľadali pár, bola vopred zúžená len na firmy, pre ktoré sme mali k dispozícii kompletné dáta.
 Rozdelenie firiem na trénovaciu a testovaciu vzorku v pomere \(80:20\) už bolo náhodné, ale to nemení nič na skutočnosti, že spojená množina trénovacích a testovacích dát vznikla deterministicky.
 
 V problematike predikcie bankrotu avšak deterministickosť trénovacej vzorky nie je vôbec výnimočná;
 podľa článku \cite{zmijewski} z roku 1984 až 70 \% článkov venujúcich sa bankrotu využíva na vytvorenie trénovacej sady práve párovaciu metódu, vrátane najznámejšej štúdie Altmana z roku 1968.
-Párovacia metóda sa využila aj v niektorých novších článkov, viď napr. \cite{bodle}.
+Párovacia metóda sa využila aj v niektorých novších článkoch, viď napr. \cite{bodle}.
 
 Jednou z výhod logistickej regresie (oproti napr. diskriminačnej analýze) je to, že pri predikcii má jej výstup jasnú interpretáciu –
 predstavuje pravdepodobnosť, že daný pozorovaný objekt patrí do triedy \(Y = 1\).
 Pri prítomnosti silnej nevyváženosti tried v populácii a nenáhodnosti trénovacej sady dát vyvstáva otázka, či sa táto interpretácia nestráca.
 
-V práci sme vytvorili tri modely logistickej regresie, pričom vytvárali sme ich na základe trénovacej vzorke dát veľkosti \(1832\) firiem, kvalitu modelov sme vyhodnocovali na vzorke \(458\) firiem.
+V práci sme vytvorili tri modely logistickej regresie, pričom vytvárali sme ich na základe trénovacej vzorky dát veľkosti \(1832\) firiem, kvalitu modelov sme vyhodnocovali na vzorke \(458\) firiem.
 V oboch vzorkách bol pomer prosperujúcich firiem a firiem v bankrote \(50:50\).
 
 \begin{figure}
@@ -66,7 +66,7 @@ V oboch vzorkách bol pomer prosperujúcich firiem a firiem v bankrote \(50:50\)
 \label{model_bace_whole_pop}
 \end{figure}
 
-Obrázok \ref{model_bace_whole_pop} predstavuje histogram výstupov modelu logistickej regresie \autoref{modely bace} (\emph{BACE} model kompletnej enumerácie)
+Obrázok \ref{model_bace_whole_pop} predstavuje histogram výstupov modelu logistickej regresie z časti\autoref{model_bace_1} (\emph{BACE} model kompletnej enumerácie)
 v rámci celej populácie slovenských firiem s dostatočným množstvom dát na ich výpočet za rok 2019.
 Z celkového počtu \(212169\) vypočítaných pravdepodobností \(40849\) vyšlo vyššie ako \(0.5\),
 čo pri bežnom ponímaní logistickej regresie znamená, že \(40849\) firiem bolo zaradených do skupiny firiem v bankrote.
@@ -132,7 +132,7 @@ Podmienkou použitia apriórnej korekcie je poznanie skutočnej prevalencie firi
 V praxi nám stačí odhad hodnoty \(\pi\).
 Keďže pri problematike bankrotu máme populáciu firiem dobre zdokumentovanú, predpokladajme, že predchádzajúca prevalencia firiem v bankrote je dostatočne dobrým odhadom hodnoty \(\pi\).
 
-Apriórna korekcia spočíva v odpočítaní hodnoty delta od intereceptu \(beta_0\), pričom:
+Apriórna korekcia spočíva v odpočítaní hodnoty delta od interceptu \(\beta_0\), pričom:
 
 \[
     \delta = \ln \left[ \left( \frac{1 - \pi}{\pi} \right) \left( \frac{\bar{y}}{1 - \bar{y}} \right) \right].
@@ -140,7 +140,7 @@ Apriórna korekcia spočíva v odpočítaní hodnoty delta od intereceptu \(beta
 
 Uvedomme si, že v prípade náhodného výberu platí \( \bar{y} = \pi \), a teda \( \delta = 0 \).
 
-Obrázok \ref{correction_demo} ilustruje vplyv korekcie pre hodnoty \( \pi = 0.01 \) a \( \bar{y} = 0.5 \) (trénovacia vzorka s pomeromo prosperujúcich firiem a firiem v bankrote \(50:50\)).
+Obrázok \ref{correction_demo} ilustruje vplyv korekcie pre hodnoty \( \pi = 0.01 \) a \( \bar{y} = 0.5 \) (trénovacia vzorka s pomerom prosperujúcich firiem a firiem v bankrote \(50:50\)).
 Upraveným pravdepodobnostiam modelu s korekciou napr. \(0,005, 0.01, 0.02, 0.10\) zodpovedajú výstupy pôvodného modelu \(0.33, 0.5, 0.67, 0.92\).
 
 \begin{figure}

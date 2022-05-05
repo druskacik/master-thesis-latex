@@ -70,7 +70,7 @@ Na obrázku je zobrazený graf logistickej funkcie na intervale \( (-6, 6) \):
 \end{center}
 
 Argumentom prirodzeného logaritmu v logit funkcii je výraz \( \frac{p}{1 - p} \) pre \( p \in (0, 1) \).
-Ak takéto \(p\) budeme chápať ako pravdepodobnosť, výraz \( \frac{p}{1 - p} \) predstavuje takzvaný pomer šancí (\emph{angl. odds-ratio}).
+Ak takéto \(p\) budeme chápať ako pravdepodobnosť, výraz \( \frac{p}{1 - p} \) predstavuje takzvaný pomer šancí (angl. \emph{odds-ratio}).
 Napríklad pri hode kockou je pravdepodobnosť padnutia šestky rovná \( 1/6 \) a pomer šancí je \( \frac{\frac{1}{6}}{1 - \frac{1}{6}} = \frac{\frac{1}{6}}{\frac{5}{6}} = \frac{1}{5} = 1 : 5\),
 čo znamená, že 1 možný výsledok hodu kockou zodpovedá šestke a 5 možných výsledkov šestke nezodpovedá.
 
@@ -96,13 +96,13 @@ vzorec (\ref{logistic_regression}) nám poslúži na výpočet pravdepodobnosti 
 
 \subsubsection{Odhad parametrov v logistickej regresii}
 
-Majme teda zovšebecnený regresný model tvaru
+Majme teda zovšeobecnený regresný model tvaru
 
 \[
-h_\beta(x) = P(Y = 1|x) = \frac{1}{1 + e^{-\beta^T x}}
+h_\beta(x) = P(Y = 1|x) = \frac{1}{1 + e^{-\beta^T x}}.
 \]
 
-Neznámym parametrom v tomto modeli je koeficient \( \beta = (\beta_0, \beta_1, \ldots, \beta_k) \).
+Neznámym parametrom v tomto modeli je vektor \( \beta = (\beta_0, \beta_1, \ldots, \beta_k) \).
 Na odhad parametra \( \beta \) sa vo väčšine prípadov používa metóda maximálnej vierohodnosti.
 Na rozdiel od obyčajnej lineárnej regresie s normálne rozdelenými chybami,
 v logistickej regresii nie je možné nájsť exaktné analytické vyjadrenie odhadu parametra \( \beta \) metódou maximálnej vierohodnosti
@@ -136,7 +136,8 @@ Potom pre funkciu vierohodnosti parametra \( \beta \) platí
 L(\beta | X, y) = \prod_{i = 1}^n h_\beta(x_i)^{y_i} (1 - h_\beta(x_i))^{1 - y_i}
 \]
 
-Trénovanie logistickej regresie spočíva v maximalizovaní funkcie vierohodnosti,
+„Trénovanie“\footnote{Používame tu modernú terminológiu strojového učenia; pod trénovaním  modelu rozumieme hľadanie takých hodnôt jeho parametrov, ktoré minimalizujú jeho stratovú funkciu pre nejaké namerané dáta \emph{X}}
+logistickej regresie spočíva v maximalizovaní funkcie vierohodnosti,
 čo je ekvivalentné maximalizácii jej logaritmu (angl. \emph{log-likelihood function}), a teda hľadáme
 
 \[
@@ -145,14 +146,6 @@ Trénovanie logistickej regresie spočíva v maximalizovaní funkcie vierohodnos
 
 Na nájdenie maxima log-likelihood funkcie v prípade logistickej regresie sa používajú iteračné metódy,
 napr. funkcia \emph{glm} v základnej verzii jazyka \emph{R} využíva metódu \emph{IRLS} (\emph{iteratively reweighted least squares}).
-
-\subsubsection{Sumárne štatistiky v logistickej regresii}
-
-TODO: Tu napíšem niečo o hodnotách ako \(R^2\) atď., ešte to nemám celkom premyslené.
-
-\subsubsection{Interpretácia parametrov v logistickej regresii}
-
-TODO
 
 \subsection{Bayesian averaging of classical estimates (BACE)}
 
@@ -173,7 +166,8 @@ Narozdiel od toho v bayesovskej štatistike považujeme parametre za náhodné p
 
 \subsubsection{Bayesovské priemerovanie modelov (\emph{Bayesian model averaging})}
 
-Jedným zo základných tvrdení bayesovskej štatistiky je tzv. Bayesovo pravidlo, ktoré hovorí nasledovne:
+Jedným zo základných tvrdení bayesovskej štatistiky je tzv. Bayesovo pravidlo, ktoré hovorí nasledovné.
+Nech \(A\) a \(B\) sú náhodné udalosti a nech \(P(B) \neq 0\). Potom:
 
 \[
 P(A|B) = \frac{P(B|A) P(A)}{P(B)}.
@@ -185,7 +179,7 @@ Bayesovo pravidlo možno zovšeobecniť pre spojité náhodné premenné a ich h
     g(\beta | y) = \frac{f(y | \beta) g(\beta)}{f(y)}.
 \end{equation}
 
-Aplikujme vzorec (\ref{bayes_rule}) na premenné, ktoré vystupujú v logistickej regresii.
+Vysvetlíme, ako interpretujeme vzorec (\ref{bayes_rule}) v prípade logistickej regresie.
 Nech \( \beta \) je vektor parametrov (intercept a koeficienty jednotlivých vysvetľujúcich premenných),
 \( g(\beta) \) je jeho apriórna hustota, ktorú interpretujeme ako presvedčenie výskumníka o parametri \( \beta \) predtým, než spoznáme dáta,
 \( y \) nech je vektor nameraných dát a \( f(y) \) jeho hustota.
@@ -198,7 +192,7 @@ existuje teda celkovo \( 2^k \) modelov so všetkými možnými kombináciami vy
 (\( M_i \) môže byť reprezentované napr. binárnym vektorom dĺžky \(k\), pričom hodnota na mieste \( j = 1, \ldots, k \) hovorí o zaradení, resp. nezaradení \(j\)-tej vysvetľujúcej premennej do modelu.)
 
 Výskumník zvolí apriórne pravdepodobnosti \( p(M_i) \), pričom \( \sum p(M_i) = 1 \) (problematikou voľby apriórnych pravdepodobností sa budeme zaoberať neskôr).
-Z bayesovho pravidla vyplýva, že:
+Z Bayesovho pravidla vyplýva, že:
 
 \[
     g(\beta | y) = \sum_{i = 1}^{2^k} p(M_i) \frac{f(y | \beta) g(\beta | M_i)}{f(y)}.
@@ -211,7 +205,7 @@ Pre aposteriórne pravdepodobnosti vyzerá vzorec nasledovne:
 \end{equation}
 
 kde \(p(M_i|y)\) je aposteriórna pravdepodobnosť modelu \(M_i\) po tom, čo spoznáme dáta \(y\).
-Vzorec (\ref{posterior_probabilities}) hovorí, že aposteriórne rozdelenie parametra \(\beta\) je váženým priemerom aposteriórnych hustôt parametra beta podmienených modelom \(M_i\),
+Vzorec (\ref{posterior_probabilities}) hovorí, že aposteriórne rozdelenie parametra \(\beta\) je váženým priemerom aposteriórnych hustôt parametra \(\beta\) podmienených modelom \(M_i\),
 s váhami rovnými aposteriórnym pravdepodobnostiam modelov \(M_i\).
 Takýto prístup zakomponovania neistôt modelov do výpočtu hľadanej veličiny sa nazýva \emph{Bayesian model averaging} (\emph{BMA}).
 
@@ -225,7 +219,7 @@ kde \( \hat{\beta}^{(i)} = E(\beta |y, M_i) \) je odhad parametra \( \beta \) pr
 (pozn.: pôvodná metóda BACE pracovala s lineárnou regresiou, kde odhad metódou maximálnej vierohodnosti je vlastne jednoznačný \emph{klasický} odhad metódou najmenších štvorcov;
 v prípade logistickej regresie parameter odhadujeme iteračnou metódou).
 
-Aposteriórna disperzia parametra beta je daná vzorcom:
+Aposteriórna disperzia parametra \(\beta\) je daná vzorcom:
 
 \[
     D(\beta | y) = \sum_{i = 1}^{2^k} p(M_i | y) D(\beta | y, M_i) + \sum_{i = 1}^{2^k} p(M_i | y) \left( \hat{\beta}^{(i)} - \sum_{i = 1}^{2^k} p(M_i | y) \hat{\beta}^{(i)} \right)^2.
@@ -244,14 +238,14 @@ Výpočet aposteriórnej pravdepodobnosti zahrnutia bude hlavný výstup metódy
 Za signifikantné premenné označíme tie, ktorých aposteriórna pravdepodobnosť zahrnutia bude vyššia ako apriórna pravdepodobnosť zahrnutia, čo predstavuje štandardný postup pri využívaní tejto metódy pri regresiách.
 
 Teória za bayesovským priemerovaním modelov je priamočiara,
-ale jeho praktická implementácia prináša dve hlavné výzvy – voľbu apriórnych pravdepodobnosti modelov a dopočitanie ich aposteriórnych pravdepodobností.
+ale jeho praktická implementácia prináša dve hlavné výzvy – voľbu apriórnych pravdepodobností modelov a dopočítanie ich aposteriórnych pravdepodobností.
 
 \subsubsection{Voľba apriórnych pravdepodobností}
 
 Sila bayesovskej štatistiky spočíva v tom, že nám pri odhadoch hľadanej veličiny dáva možnosť využiť naše apriórne presvedčenie o nej – jej apriórne rozdelenie.
 Ukazuje sa, že táto „prednosť“ bayesovskej štatistiky je zároveň problémom, pretože voľba apriórnych pravdepodobností býva často náročná úloha.
-Apriórne rozdelenia sa zvyčajne volia na základe informácií z predošlých štúdií zaoberajúcich sa danou problematikou alebo názorov expertov z danej oblasti \cite{carlin}.
-Pri výbere apriórneho rozdelenia sa často volí rozdelenie z nejakej známej triedy, napr. normálne, binomické, poissonovo atď.
+Apriórne rozdelenia sa zvyčajne volia na základe informácií z predošlých štúdií zaoberajúcich sa danou problematikou alebo názorov expertov z danej oblasti (viď napr. \cite{carlin}).
+Pri výbere apriórneho rozdelenia sa často volí rozdelenie z nejakej známej triedy, napr. normálne, binomické, Poissonovo atď.
 
 Pri veľkom množstve parametrov je väčšinou nepraktické voliť apriórne rozdelenie pre každý jeden z nich.
 V podobných prípadoch sa zvykne voliť apriórne rozdelenie, ktoré má neinformatívny charakter, napr. rôzne varianty rovnomerného rozdelenia.
@@ -331,7 +325,7 @@ Takýto prístup v prípade tejto práce nezodpovedá nášmu apriórnemu presve
     };
     \end{axis}
 \end{tikzpicture}
-\caption{Pravdepodobnostné rozdelenie počtu parametrov modelu pre \(\bar{k} = 20\), \(K = 40\) (rovnaká apriórna pravdepobnosť pre všetky modely)}
+\caption{Pravdepodobnostné rozdelenie počtu parametrov modelu pre \(\bar{k} = 20\), \(K = 40\) (rovnaká apriórna pravdepodobnosť pre všetky modely)}
 \label{priorprobs20_40}
 \end{figure}
 
@@ -417,7 +411,7 @@ y = X \beta + \epsilon,
 \end{equation}
 
 kde \( \epsilon \sim N(0, \sigma^2 I) \).
-Pri problematike selekcie premenných z množiny celkovo \(k\) potenciálnych premenných pracujeme s celkovo \(2^k\) modelmi zodpovedajúcimi každej možnej podmnožine k premenných,
+Pri problematike selekcie premenných z množiny celkovo \(k\) potenciálnych premenných pracujeme s \(2^k\) modelmi zodpovedajúcimi každej možnej podmnožine k premenných,
 vrátane modelu bez vysvetľujúcich premenných (t.j. len s interceptom) a plného modelu so všetkými \(k\) premennými.
 Priestor všetkých modelov označme \(M = \{ M_1, M_2, \ldots, M_K \} \), \(K = 2^k\).
 
@@ -429,7 +423,7 @@ y = X_{\gamma} \beta_{\gamma} + \epsilon,
 \end{equation}
 
 v ktorom vystupujú len vysvetľujúce premenné dané vektorom \( \gamma \).
-Exaktný výpočet aposteriórnych pravdepodobností si vyžaduje zadefinovanie hustôt jednolivých náhodných premenných vo vzorcoch (\ref{linear_regression}) a (\ref{linear_regression_subset}).
+Exaktný výpočet aposteriórnych pravdepodobností si vyžaduje zadefinovanie hustôt jednotlivých náhodných premenných vo vzorcoch (\ref{linear_regression}) a (\ref{linear_regression_subset}):
 
 \begin{equation} \label{pdf_y}
     y | \beta, \sigma^2, M_i \sim N(X_{\gamma} \beta_{\gamma}, \sigma^2 I),
@@ -445,7 +439,7 @@ Exaktný výpočet aposteriórnych pravdepodobností si vyžaduje zadefinovanie 
 \end{equation}
 
 Hustota (\ref{pdf_y}) je ekvivalentná hustote, ktorú predpokladáme pri bežnej lineárnej regresii.
-Hustota (\ref{pdf_beta}) predstavuje apriórne rozdelenie \( \beta_{\gamma}\), vektora nenulových prkov parametra \(\beta\) pre jednotlivé modely,
+Hustota (\ref{pdf_beta}) predstavuje apriórne rozdelenie \( \beta_{\gamma}\), vektora nenulových prvkov parametra \(\beta\) pre jednotlivé modely,
 a (\ref{pdf_model}) predstavuje apriórnu pravdepodobnosť jednotlivých modelov (v našom prípade ide o pevné číslo).
 
 Aposteriórne rozdelenie pravdepodobnosti modelu \(M_i\) možno vyjadriť vzťahom:
@@ -468,13 +462,13 @@ V našej práci budeme aposteriórne pravdepodobnosti modelov aproximovať vzťa
 ktorý okrem lineárnej regresie platí aj pre zovšeobecnené linerálne modely (angl. \emph{generalized linear models}):
 
 \begin{equation} \label{posterior_model_approximation}
-        p(M_i | y) = \frac{p(M_i) e^{-\frac{1}{2}BIC(M_i)}}{\sum_{i = 1}^{K} p(M_i) e^{-\frac{1}{2}BIC(M_i)}}.
+        p(M_i | y) = \frac{p(M_i) e^{-\frac{1}{2}BIC(M_i, y)}}{\sum_{i = 1}^{K} p(M_i) e^{-\frac{1}{2}BIC(M_i, y)}}.
 \end{equation}
 
 \(BIC\) predstavuje bayesovské informačné kritérium (angl. \emph{Bayesian infomation criterion}), ktoré je definované nasledovne:
 
 \[
-    BIC(M_i) = m \ln{n} - 2 \ln{\hat{L}},
+    BIC(M_i) = m \ln{n} - 2 \ln{\hat{L}(M_i, y)},
 \]
 
 kde \( m \) je počet parametrov vystupujúcich v modeli, \(n\) je počet dát,
@@ -485,11 +479,11 @@ a \(\hat{L}\) je maximum pravdepodobnostnej funkcie modelu pre dané dáta \(X_{
 
 V ideálnom svete by sme pre pre \(k\) potenciálnych vysvetľujúcich premenných vyčíslili všetkých \(2^k\) modelov,
 čo by nám poskytlo presný výsledok pre aposteriórne pravdepodobnosti modelov a posteriórne pravdepodobnosti zahrnutia premenných (pri predpodkladaných apriórnych pravdepodobnostiach).
-V praxi býva \(2^k\) príliš veľké na takúto \emph{exhaustívnu} enumeráciu – v pôvodnom článku Sala-i-Martina pracovali autori s \(k = 32\) premennými, my máme premenných \(74\).
+V praxi býva \(2^k\) príliš veľké na takúto úplnú enumeráciu (angl. \emph{exhaustive enumeration}) – v pôvodnom článku Sala-i-Martina pracovali autori s \(k = 32\) premennými, my máme premenných \(74\).
 
 Riešením je odhadnúť len časť z množiny \(2^k\) modelov, pričom konkrétnych implementácií nájdeme v literatúre niekoľko.
 V článku \cite{sala-i-martin} autori navrhli a použili heuristiku, ktorá po mnoho iterácií generuje modely obsahujúce náhodnú množinu vysvetľujúcich premenných,
-až kým odhad strednej hodnoty neskonverguje (podľa nejakého vopred stanoveného kritéria).
+až kým odhad strednej hodnoty parametra \(\beta\) neskonverguje (podľa nejakého vopred stanoveného kritéria).
 Apriórnou informáciou, ktorú pri tomto prístupe treba zvoliť, sú apriórne pravdepodobnosti jednotlivých modelov.
 Podobne ako v tejto práci, aj my pri implementácii tejto metódy apriórne pravdepodobnosti modelov spočítame pomocou apriórnych pravdepodobností zahrnutia premenných,
 ktorú zvolíme ako \(\bar{k}/K\) podľa očakávaného počtu vysvetľujúcich premenných \(\bar{k}\) v „skutočnom“ modeli.

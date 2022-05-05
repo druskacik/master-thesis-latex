@@ -4,7 +4,7 @@ V tejto kapitole si opíšeme proces vytvorenia modelov logistickej regresie za 
 
 \subsection{Dáta}
 
-V prvom kroku si vytvoríme trénovaciu vzorku pre modely logistickej regresie.
+V prvom kroku si vytvoríme trénovaciu vzorku\footnote{Opäť používame modernú terminológiu strojového učenia. Trénovacou vzorkou v tejto práci rozumiemieme dáta, pomocou ktorých budeme odhadovať parametre modelu.} pre modely logistickej regresie.
 Zdrojom dát je databáza \emph{FinStat}, ktorá spracúva údaje o slovenských spoločnostiach, ktorých je celkovo približne \(250000\).
 
 Niektoré firmy sa nehodia na modelovanie úpadku, či už svojím charakterom alebo nedostatočne či nepresne vyplnenými dátami.
@@ -13,7 +13,7 @@ Podrobný opis podmienok na firmy, ktoré zaradíme do trénovacich dát, uvádz
 
 \begin{enumerate}
     \item Firma musí mať k dispozícii dáta z jej účtovnej závierky. Dôvod: účtovná závierka je zdrojom väčšiny finančných údajov firmy.
-    \item Účtovná závierka nesmie byť spracovaná ocr skenom. Dôvod: OCR sken dokumentu niekedy vytiahne nesprávne hodnoty, čo by mohlo negatívne ovplyvniť kvalitu dát.
+    \item Účtovná závierka nesmie byť spracovaná OCR skenom. Dôvod: OCR sken dokumentu niekedy vytiahne nesprávne hodnoty, čo by mohlo negatívne ovplyvniť kvalitu dát.
     \item Právna forma spoločnosti je jedna z nasledovných: Akciová spoločnosť, Družstvo, Komanditná spoločnosť, Spoločnosť s r. o., Verejne obchodovateľná spoločnosť, Jednoduchá spoločnosť na akcie. Vylúčené boli napr. neziskové organizácie, združenia, štátne podniky atď.
     % \item Firma nepôsobí v odvetví s nasledovnými SK NACE kódmi:
     % \begin{itemize}
@@ -64,12 +64,12 @@ Pre jednu z týchto firiem neexistovala žiadna firma pôsobiaca v rovnakom odve
 Tejto firme sme priradili firmu z podobného odvetvia s SK NACE kódom 08990 (Iná ťažba a dobývanie i.n.).
 
 Vo finálnom datasete máme dokopy \(2290\) firiem, z toho \(1145\) prosperujúcich a \(1145\) v úpadku.
-Pre účely modelovania a následného vyhodnocovania modelov sme tieto dáta rozdelili na trénovaciu, testovaciu a validačnú sadu v pomere \(60:20:20\),
+Pre účely modelovania a následného vyhodnocovania modelov sme tieto dáta rozdelili na trénovaciu a testovaciu sadu v pomere \(80:20\),
 pričom v každej z nich bol pomer prosperujúcich firiem a firiem v úpadku \(50:50\).
 
 V ďalších častiach vytvoríme samotné modely logistickej regresie. Hlavným problémom je vyčlenenie najsignifikantnejších premenných pre predikciu bankrotu.
 
-\subsection{Model selection}
+\subsection{Voľba modelu}
 
 Ku každej z \(2290\) firiem v našich dátach máme k dispozícii \(74\) finančných parametrov.
 Cieľom tejto práce je vytvoriť model, ktorý bude obsahovať ideálne len malý počet parametrov, viď podkapitolu\autoref{model interpretability}.
@@ -86,7 +86,7 @@ Pripomíname, že naším cieľom je vytvoriť jednoduchý a interpretovateľný
 Cieľom metódy \emph{lasso} je nájsť parameter \(\hat{\beta}\) spĺňajúci
 
 \[
-    \hat{\beta} = \min_{\beta \in R^k} \left[ \frac{1}{n} \sum_{i = 1}^n y_i (\beta^T x_i) - \ln{(1 + e^{\beta^T x_i})} \right] + \lambda || \beta ||_1.
+    \hat{\beta} = \min_{\beta \in R^k} \left( - \left[ \frac{1}{n} \sum_{i = 1}^n y_i \cdot (\beta^T x_i) - \ln{(1 + e^{\beta^T x_i})} \right] + \lambda || \beta ||_1 \right).
 \]
 
 Parameter \(\lambda\) určuje stupeň regularizácie – pri vyšších hodnotách \(\lambda\) metóda vynuluje viac parametrov a naopak.
@@ -94,7 +94,7 @@ Parameter \(\lambda\) je v metóde \emph{lasso} voľným parametrom, a jeho hodn
 teda pre testovaciu sadu veľkosti \(1832\) (\(916\) firiem v úpadku, \(916\) prosperujúcich) bolo vytvorených \(1832\) regresií,
 pričom pri každej bola vylúčená jedna firma, na ktorej sa daná regresia otestovala.
 
-Parametre, ktorým metóda \emph{lasso} pridelila nenulovú hodnotu (a teda ich zaradila do finálneho modelu logistickej regresie) je uvedený v tabuľke \ref{lasso tabulka vsetky parametre}.
+Parametre, ktorým metóda \emph{lasso} pridelila nenulovú hodnotu (a teda ich zaradila do finálneho modelu logistickej regresie) sú uvedené v tabuľke \ref{lasso tabulka vsetky parametre}.
 Parametrov s nenulovým koeficientom je \(14\).
 
 \begin{table}
@@ -122,7 +122,7 @@ Parametrov s nenulovým koeficientom je \(14\).
 Dodatočnou analýzou sme množinu premenných v modeli okresali ešte viac.
 Premenné INDEX 05 a Binkertov model predstavujú hodnotenie finančnej kondície firmy inými modelmi, nepredstavujú teda rýdzo finančný údaj a do modelu sa nehodia.
 Premenné Likvidita 1. stupňa a Likvidita 3. stupňa sú vysoko korelované a vybrali sme z nich len Likviditu 3. stupňa,
-lebo tej priadil \(t\)-test signifikantnosti parametra výrazne nižšiu \(p\)-hodnotu a teda ju môžeme považovať za signifikantnejšiu premennú.
+lebo tej priadil \(t\)-test signifikantnosti parametra výrazne nižšiu \(p\)-hodnotu, a teda ju môžeme považovať za signifikantnejšiu premennú.
 
 Vylúčenie ďalších troch parametrov (\emph{EBITDA}, \emph{Čistý prevádzkový zisk po zdanení}, a \emph{Čistý dlh}) vyplynulo z ďalšej analýzy,
 pri ktorej sme skúmali výstupy modelu pre širšiu množinu firiem, mimo trénovacej a testovacej sady.
@@ -163,20 +163,20 @@ metódu \emph{lasso} sme teda využili len pri skúmaní signifikantnosti jednot
 Vzorec pre výpočet skóre týmto modelom má nasledovný tvar:
 
 \[
-    \text{score}_\text{lasso} = \frac{1}{1 + e^{-(-0.654 - 0.0018X_1 + 0.734X_2 - 0.060X_3 - 3.102X_4 - 1.841X_5 + 0.000002X_6)}}
+    \text{score}_\text{lasso} = \frac{1}{1 + e^{-(-0.654 - 0.0018X_1 + 0.734X_2 - 0.060X_3 - 3.102X_4 - 1.841X_5 + 0.000002X_6)}},
 \]
 
 kde
 
-\(X_1 = \) Záväzky/EBITDA
+\(X_1 = \) Záväzky/EBITDA,
 
-\(X_2 = \) Celková zadlženosť
+\(X_2 = \) Celková zadlženosť,
 
-\(X_3 = \) Likvidita 3. stupňa
+\(X_3 = \) Likvidita 3. stupňa,
 
-\(X_4 = \) Finančné účty/Aktíva
+\(X_4 = \) Finančné účty/Aktíva,
 
-\(X_5 = \) Návratnosť aktív
+\(X_5 = \) Návratnosť aktív,
 
 \(X_6 = \) Doba splácania záväzkov.
 
@@ -194,13 +194,14 @@ Pôvodná metóda \emph{BACE} predstavuje algoritmus, ktorý náhodne volí veľ
 až do momentu, kým odhady parametra \(\beta\) neskonvergujú.
 
 \paragraph{Metóda kompletnej enumerácie}
+\label{model_bace_1}
 
 Jediná apriórna informácia, ktorú pri metóde \emph{BACE} vkladáme do výpočtovej procedúry, je očakávaný počet parametrov vo výslednom modeli \( \bar{k} \).
 V našom prípade sme zvolili \( \bar{k} = 5 \) na základe niekoľkých skutočností: \(5\) parametrov majú aj zaužívané modely ako Altmanovo Z-skóre či INDEX 05,
 a \(5\) parametrov sa ukázalo byť signifikantných (použitím metódy \emph{BACE}) aj v práci \cite{ondrusekova}, ktorú replikujeme.
-Zároveň, podľa \cite{sala-i-martin} aj \cite{polaci} malá zmena hodnoty khat nemá veľký vplyv na výstupy metódy \emph{BACE}.
+Zároveň, podľa \cite{sala-i-martin} aj \cite{polaci} malá zmena hodnoty \( \bar{k} \) nemá veľký vplyv na výstupy metódy \emph{BACE}.
 Na základe uvedených skutočností sme usúdili, že voľba \( \bar{k} = 5 \) je pre náš prípad adekvátna.
-Dôležitejšie ako konkrétna zvolená hodnota khat je fakt, že \( \bar{k} \) sa pohybuje v nízkych hodnotách a je rádovo menšia oproti celkovému počtu parametrov \( K = 74 \).
+Dôležitejšie ako konkrétna zvolená hodnota \( \bar{k} \) je fakt, že \( \bar{k} \) sa pohybuje v nízkych hodnotách a je rádovo menšia oproti celkovému počtu parametrov \( K = 74 \).
 
 V prvej implementácii metódy \emph{BACE} sme kompletne enumerovali všetky modely s \(5\) premennými, zvolenými z celkového počtu \(74\) premenných.
 Takých modelov je celkovo \(\binom{74}{5} = 16108764\), z tejto množiny sme však vylúčili tie modely, ktoré obsahovali vysoko korelované (resp. závislé) premenné.
