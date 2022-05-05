@@ -84,6 +84,9 @@ plainpages=false
 \titlespacing*{\paragraph}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
+\newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
+\renewcommand{\subsectionautorefname}{}
+
 \begin{document}
 
   \input{01 Titulka}
@@ -163,11 +166,18 @@ plainpages=false
     \markboth{Príloha C}{Príloha C}
     \input{10 AppendixC}
 
-    \newpage
-  \section*{Príloha D - Výpočtové aspekty iteračnej metódy \emph{BACE}} 
+  \newpage
+  \section*{Príloha D} 
     \label{appendix:d}
     \addcontentsline{toc}{section}{Príloha D}
-    \markboth{Príloha C}{Príloha D}
+    \markboth{Príloha D}{Príloha D}
     \input{10 AppendixD}
+
+  \newpage
+  \section*{Príloha E - Výpočtové aspekty iteračnej metódy \emph{BACE}}
+    \label{appendix:e}
+    \addcontentsline{toc}{section}{Príloha E}
+    \markboth{Príloha E}{Príloha E}
+    \input{10 AppendixE}
 
 \end{document}

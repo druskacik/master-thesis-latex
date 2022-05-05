@@ -1,0 +1,100 @@
+V tejto prílohe sa bližšie venujeme výpočtovým aspektom iteračnej metódy BACE opísanej v časti ... .
+Pripomeňme si, že pri celkovom počte vysvetľujúcich \(K\) a očakávanom počte premenných v „správnom“ modeli \(\bar{k}\)
+sme za apriórne pravdepodobnosti zahrnutia premenných zvolili hodnotu \(\bar{k}/K\), a apriórne pravdepodobnosti modelov sme dopočítali ako:
+
+\[
+p_{\text{prior}}(M_i) = \left( \frac{\bar{k}}{K} \right)^{k_i} \left( 1 - \frac{\bar{k}}{K} \right)^{K - k_i},
+\]
+
+kde \( k_i \) je počet premenných zahrnutých do modelu \( M_i \).
+Po enumerácii nejakého počtu modelov \(c\) spočítavame odhad strednej hodnoty parametra \(\beta\) a aposteriórnu pravdepodobnosť zahrnutia vysvetľujúcej premennej \(X_j\) pomocou vzťahov:
+
+\[
+    E(\beta | y) = \sum_{i = 1}^{c} p(M_i | y) \hat{\beta}^{(i)},
+\]
+
+\[
+    p(\beta_j \neq 0 | y) = \sum_{i = 1}^{c} p(M_i | y) I_{\beta_{j, i} \neq 0},
+\]
+
+kde \(\hat{\beta}^{(i)}\) je odhad parametra \(\beta\) pre model \(M_i\), a \(p(M_i | y)\) je aposteriórna pravdepodobnosť modelu \(M_i\), ktorú aproximujeme vzťahom:
+
+\[
+    p(M_i | y) = \frac{p(M_i) e^{-\frac{1}{2}BIC(M_i)}}{\sum_{i = 1}^{K} p(M_i) e^{-\frac{1}{2}BIC(M_i)}}.
+\]
+
+Pri prístupe, v ktorom sme enumerovali všetky modeli s \(\bar{k} = 5\) vysvetľujúcimi premennými, je postup priamočiary –
+spočítať odhady \(\beta\) a hodnoty \emph{BIC} pre všetky modely a dopočítať strednú hodnotu \(\beta\) a aposteriórne pravdepodobnosti zahrnutia premenných.
+V prípade iteračnej metódy, pri ktorej generujeme nové náhodné modely, až kým hodnota odhadu beta neskonverguje,
+treba odhad beta počítať veľakrát počas behu algoritmu, čo robí problém výpočtovo oveľa náročnejším.
+
+Pri implementácii algoritmu sme využili skutočnosť, že odhad beta spočítaný po enumerácii \(I\) modelov vieme využiť pri výpočte odhadu beta po enumerácii \(I + J\) modelov.
+Toto tvrdenie ukážeme pre výpočet odhadu \(\beta\) v iteráciách \(I\) a \(I + 1\).
+Označme \(\hat{\beta}^{(I)}\) odhad parametra \(\beta\) v iterácii \(I\) daný vzťahom:
+
+% \begin{gather*}
+%     \hat{\beta}^{(I)} = \sum_{i = 1}^{I} p(M_i | y) \hat{\beta} = \sum_{i = 1}^{I} \frac{p(M_i) e^{-\frac{1}{2}BIC(M_i)}}{\sum_{i = 1}^{K} p(M_i) e^{-\frac{1}{2}BIC(M_i)}} \hat{\beta} = \\
+%     \frac{1}{\sum_{i = 1}^{K} p(M_i) e^{-\frac{1}{2}BIC(M_i)}} \sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)} \hat{\beta}
+% \end{gather*}
+
+\[
+    \hat{\beta}^{(1:I)} = \sum_{i = 1}^{I} p(M_i | y) \hat{\beta}^{(i)} = \sum_{i = 1}^{I} \frac{p(M_i) e^{-\frac{1}{2}BIC(M_i)}}{\sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)}} \hat{\beta}^{(i)} =
+\]
+\begin{equation} \label{appendix__expected_value}
+    = \frac{1}{\sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)}} \sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)} \hat{\beta}^{(i)} = \frac{1}{d_i} \sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)} \hat{\beta}^{(i)},
+\end{equation}
+
+pričom sme zaviedli značenie \(d_n := \sum_{i = 1}^{n} p(M_i) e^{-\frac{1}{2}BIC(M_i)}\).
+Pre odhad strednej hodnoty \(\beta\) v iterácii \(I + 1\) (značíme \(\hat{\beta}^{(1:I + 1)}\)) potom platí:
+
+\[
+    \hat{\beta}^{(1:I + 1)} = \frac{1}{\sum_{i = 1}^{I + 1} p(M_i) e^{-\frac{1}{2}BIC(M_i)}} \sum_{i = 1}^{I + 1} p(M_i) e^{-\frac{1}{2}BIC(M_i)} \hat{\beta} = 
+\]
+\[
+    = \frac{1}{d_I + p(M_{I + 1}) e^{-\frac{1}{2}BIC(M_{I + 1})}} \left( \left( \sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)} \hat{\beta} \right) + p(M_{I + 1}) e^{-\frac{1}{2}BIC(M_{I + 1})} \hat{\beta}^{(I+1)} \right) = 
+\]
+\[
+    = \frac{d_I}{d_I + p(M_{I + 1}) e^{-\frac{1}{2}BIC(M_{I + 1})}} \hat{\beta}^{(1:I)} + \frac{1}{d_I + p(M_{I + 1}) e^{-\frac{1}{2}BIC(M_{I + 1})}} p(M_{I + 1}) e^{-\frac{1}{2}BIC(M_{I + 1})} \hat{\beta}^{(I+1)}.
+\]
+
+Ako vidíme, v iterácii \(I + 1\) nám na výpočet odhadu \(\beta\) stačí odhad \(\hat{\beta}^{(1:I)}\) z predošlej iterácie a hodnota \(d_I\),
+ktorá predstavuje súčet apriórnych pravdepodobností modelov prevážených hodnotami \(e^{-\frac{1}{2}BIC(M_{.})}\).
+V praxi to znamená, že po výpočte odhadu \(\beta\) v iterácii I môže algoritmus „zahodiť“ apriórne aj aposteriórne pravdepodobnosti enumerovaných modelov,
+odhady parametra \(\beta\) pre tieto modely a aj ich hodnoty \emph{BIC}.
+Celá informácia potrebná pre ďalší beh algoritmu sa dá zhrnúť len do dvoch hodnôt:
+samotného odhadu \(\hat{\beta}^{(1:I)}\) strednej hodnoty parametra \(\beta\) po iterácii \(I\) a hodnoty \(d_I := \sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)}\).
+Napriek tomu, že odhad strednej hodnoty \(\beta\) definujeme pomocou sumy cez všetky enumerované modely (viď vzorec (\ref{posterior_expected_value})),
+pri optimálnej implementácii sumu cez všetky modely nebudeme musieť počítať vôbec.
+
+Z uvedeného vyplýva, že algoritmus využívajúci vyššie uvedené vzťahy bude fungovať konštantne rýchlo aj pre obrovský počet enumerovaných modelov (potenciálne desiatky až stovky miliónov).
+
+Podobnú logiku môžeme aplikovať aj na výpočet aposteriórnych pravdepodobností zahrnutia jednotlivých vysvetľujúcich premenných.
+Ak pre aposteriórnu pravdepobnosť zahrnutia premennej \(X_j\) do modelu po iterácii \(I\) platí:
+
+\[
+    p(\beta_j \neq 0 | y)^{(1:I)} = \sum_{i = 1}^{2^k} p(M_i | y) I_{\beta_{j, i} \neq 0} = \frac{1}{\sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)}} \sum_{i = 1}^{I} p(M_i) e^{-\frac{1}{2}BIC(M_i)} I_{\beta_{j, i} \neq 0},
+\]
+
+tak po iterácii I + 1 platí:
+
+\[
+    p(\beta_j \neq 0 | y)^{(1:I + 1)} =
+\]
+\[
+    = \frac{d_I}{d_I + p(M_{I + 1}) e^{-\frac{1}{2}BIC(M_{I + 1})}} p(\beta_j \neq 0 | y)^{(1:I)} + \frac{1}{d_I + p(M_{I + 1}) e^{-\frac{1}{2}BIC(M_{I + 1})}} p(M_{I + 1}) e^{-\frac{1}{2}BIC(M_{I + 1})} I_{\beta_{j, I + 1} \neq 0}.
+\]
+
+Opäť vidíme, že algoritmus si v iterácii \(I\) potrebuje zapamätať len dve hodnoty: \(d_I\) a \( p(\beta_j \neq 0 | y)^{(1:I)} \)
+(odhad aposteriórnej pravdepodobnosti zahrnutia premennej po \(I\)-tej iterácii).
+
+V praxi nemá význam počítať odhad strednej hodnoty \(\beta\) a aposteriórne pravdepodobnosti zahrnutia premenných v každej iterácii, ale až po enumerácii väčšieho množstva modelov.
+V tejto práci sme enumerovali odhad \(\beta\) každých \(10000\) iterácií.
+Aj v takomto prípade ale nemusíme zakaždým pri výpočte robiť sumu cez všetky modely.
+Ak v iterácii I je odhad beta daný vzťahom (\ref{appendix__expected_value}), tak v iterácii \(I + 10000\) môžeme odhad \(\beta\) spočítať ako:
+
+\[
+    \hat{\beta}^{(1:I + 10000)} =
+\]
+\[
+    = \frac{d_I}{d_I + \sum_{i = I + 1}^{I + 10000} p(M_i) e^{-\frac{1}{2}BIC(M_i)}} \hat{\beta}^{(1:I)} + \frac{1}{d_I + \sum_{i = I + 1}^{I + 10000} p(M_i) e^{-\frac{1}{2}BIC(M_i)}} \sum_{i = I + 1}^{I + 10000} p(M_i) e^{-\frac{1}{2}BIC(M_i)} \hat{\beta}^{(i)}.
+\]

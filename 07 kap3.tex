@@ -3,7 +3,7 @@
 
 \subsection{Logistická regresia}
  
-Logistická regresia je štatistická metóda využívaná pri binárnej klasifikácii.
+Logistická regresia je štatistická metóda využívaná pri binárnej klasifikácii, resp. pri predikcii náhodného binárneho výsledku.
 Cieľom logistickej regresie je modelovať pravdepodobnosť nejakej triedy alebo udalosti (vysvetľovanej premennej)
 na základe jednej alebo viacerých vysvetľujúcich premenných. TODO
 
@@ -12,11 +12,11 @@ Pred tým, než opíšeme, ako presne logistická regresia funguje, si zadefinuj
 \begin{defin}
     Logistická funkcia \( \sigma : \mathbb{R} \rightarrow (0, 1) \) je definovaná ako:
     \[
-        \sigma(t) = \frac{e^t}{e^t + 1} = \frac{1}{1 + e^{-t}}
+        \sigma(t) = \frac{e^t}{e^t + 1} = \frac{1}{1 + e^{-t}}.
     \]
     Inverzná funkcia k logistickej sa nazýva logit funkcia a spĺňa:
     \[
-        logit(t) = \sigma^{-1}(t) = \ln\left(\frac{p}{1 - p}\right)
+        logit(t) = \sigma^{-1}(t) = \ln\left(\frac{p}{1 - p}\right),
     \]
     pre \( p \in (0, 1) \).
 \end{defin}
@@ -74,20 +74,23 @@ Ak takéto \(p\) budeme chápať ako pravdepodobnosť, výraz \( \frac{p}{1 - p}
 Napríklad pri hode kockou je pravdepodobnosť padnutia šestky rovná \( 1/6 \) a pomer šancí je \( \frac{\frac{1}{6}}{1 - \frac{1}{6}} = \frac{\frac{1}{6}}{\frac{5}{6}} = \frac{1}{5} = 1 : 5\),
 čo znamená, že 1 možný výsledok hodu kockou zodpovedá šestke a 5 možných výsledkov šestke nezodpovedá.
 
-Nech \( Y \) je binárna vysvetľovaná premenná, ktorej zodpovedá vektor vysvetľujúcich premenných \( x = (x_1, x_2, \ldots, x_k) \).
+Nech \( Y \) je binárna vysvetľovaná premenná, ktorej zodpovedá vektor vysvetľujúcich premenných \( x = (1, x_1, x_2, \ldots, x_k) \)
+(jednotka na začiatku bude v modeli logistickej regresie zodpovedať hodnote \emph{interceptu}).
 Pre \( Y \) zjavne platí \( P(Y = 1|x) = 1 - P(Y = 0|x) \).
-Logistická regresia predpokladá, že logaritmus pomeru šancí (\emph{angl. log-likelihood ratio}) možno modelovať ako lineárnu funkciu zložiek vektora \( x \).
+Logistická regresia predpokladá, že logaritmus pomeru šancí (angl. \emph{log-likelihood ratio}) možno modelovať ako lineárnu funkciu zložiek vektora \( x \).
 
 \[
-\ln \left( \frac{P(Y = 1|x)}{P(Y = 0|x)} \right) = \ln \left( \frac{P(Y = 1|x)}{1 - P(Y = 1|x)} \right) = \beta_0 + \beta^T x
+\ln \left( \frac{P(Y = 1|x)}{P(Y = 0|x)} \right) = \ln \left( \frac{P(Y = 1|x)}{1 - P(Y = 1|x)} \right) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_k x_k = \beta^T x.
 \]
 
 Po úpravách sa ľahko dopracujeme k záveru, že pravdepodobnosť \( P(Y = 1|x) \) je rovná výstupu logistickej funkcie, ktorej argument bude hľadaná lineárna kombinácia zložiek vektora \( x \).
 
 \begin{equation} \label{logistic_regression}
-P(Y = 1|x) = \frac{1}{1 - e^{-(\beta_0 + \beta^T x})} := h(x)
+P(Y = 1|x) = \frac{1}{1 + e^{-\beta^T x}} := h_\beta(x).
 \end{equation}
 
+Inými slovami, logistická regresia predpokladá, že pre vektor vysvetľujúcich premenných \(x\) má pozorovanie \(Y\)
+alternatívne (Bernoulliho) rozdelenie s parametrom \(h_\beta(x)\).
 Ak logistickú regresiu používame na predikciu (čo budeme robiť neskôr v tejto práci),
 vzorec (\ref{logistic_regression}) nám poslúži na výpočet pravdepodobnosti \( P(Y = 1|x) \) pri danom novom \( x \).
 
@@ -96,35 +99,51 @@ vzorec (\ref{logistic_regression}) nám poslúži na výpočet pravdepodobnosti 
 Majme teda zovšebecnený regresný model tvaru
 
 \[
-h_\beta(x) = P(Y = 1|x) = \frac{1}{1 - e^{-(\beta_0 + \beta^T x})}
+h_\beta(x) = P(Y = 1|x) = \frac{1}{1 + e^{-\beta^T x}}
 \]
 
-Neznámymi parametrami v tomto modeli sú regresory \( \beta = (\beta_1, \ldots, \beta_k) \).
-Na odhad regresných koeficientov sa vo väčšine prípadov používa metóda maximálnej vierohodnosti.
-Na rozdiel od obyčajnej lineárnej regresie s normálne rozdelenými chybami, v logistickej regresii nie je možné nájsť exaktné vyjadrenie parametrov \( \beta \),
-a na ich odhad sa používa nejaká iteračná metóda.
+Neznámym parametrom v tomto modeli je koeficient \( \beta = (\beta_0, \beta_1, \ldots, \beta_k) \).
+Na odhad parametra \( \beta \) sa vo väčšine prípadov používa metóda maximálnej vierohodnosti.
+Na rozdiel od obyčajnej lineárnej regresie s normálne rozdelenými chybami,
+v logistickej regresii nie je možné nájsť exaktné analytické vyjadrenie odhadu parametra \( \beta \) metódou maximálnej vierohodnosti
+a pre konkrétne dáta sa na výpočet tohto odhadu používa nejaká iteračná metóda.
 
-Keďže \(Y\) nadobúda len hodnoty z \( \{0, 1\} \), pre distribučnú funkciu \(Y\) platí:
+Keďže \(Y\) nadobúda len hodnoty z \( \{0, 1\} \), pre vierohodnostnú funkciu \(Y\) platí:
 
 \[
 P(y | x; \beta ) = h_\beta(x)^y (1 - h_\beta(x))^{1 - y}
 \]
 
-Majme namerané vektory dát \( x_1, \ldots, x_n \), \( x_i = x_{i1}, \ldots, x_{ik} \),
-a k nim prislúchajúce \( y_1, \ldots, y_n \). Potom pre funkciu vierohodnosti parametra \( \beta \) platí
+Majme namerané vektory dát \( x_1, \ldots, x_n \), kde \( x_i = (1, x_{i1}, \ldots, x_{ik}) \),
+a k nim prislúchajúci vektor nameranej vysvetľovanej premennej \(y = (y_1, \ldots, y_n )\). Označme
 
 \[
-L(\beta | y; ) TODO
+    X =
+    \left[
+        \begin{array}{ccc}
+            \horzbar & x_{1} & \horzbar \\
+            \horzbar & x_{2} & \horzbar \\
+                    & \vdots    &          \\
+            \horzbar & x_{n} & \horzbar
+        \end{array}
+    \right].
+\]
+
+
+Potom pre funkciu vierohodnosti parametra \( \beta \) platí
+
+\[
+L(\beta | X, y) = \prod_{i = 1}^n h_\beta(x_i)^{y_i} (1 - h_\beta(x_i))^{1 - y_i}
 \]
 
 Trénovanie logistickej regresie spočíva v maximalizovaní funkcie vierohodnosti,
-čo je ekvivalentné maximalizácii jej logaritmu (\emph{angl. log-likelihood function}), a teda hľadáme
+čo je ekvivalentné maximalizácii jej logaritmu (angl. \emph{log-likelihood function}), a teda hľadáme
 
 \[
-TODO
+\hat{\beta} := \max_{\beta} \ln L(\beta | y) = \max_{\beta} \sum_{i = 1}^n y_i \ln{h_{\beta}(x_i)} + (1 - y_i) \ln{(1 - h_{\beta}(x_i))}
 \]
 
-Na nájdenie maxima log-likelihood funkcie sa používajú iteračné metódy,
+Na nájdenie maxima log-likelihood funkcie v prípade logistickej regresie sa používajú iteračné metódy,
 napr. funkcia \emph{glm} v základnej verzii jazyka \emph{R} využíva metódu \emph{IRLS} (\emph{iteratively reweighted least squares}).
 
 \subsubsection{Sumárne štatistiky v logistickej regresii}
@@ -140,10 +159,10 @@ TODO
 Dáta, ktoré budeme spracúvať v našej práci, obsahujú 70 vysvetľujúcich premenných pre každý rok pôsobenia firmy.
 Prirodzene, nie všetky z nich sa hodia na modelovanie bankrotu.
 Naším cieľom bude vytvoriť model, ktorý bude relatívne jednoduchý, a v ktorom budú vystupovať len tie najsignifikantnejšie vysvetľujúce premenné z hľadiska predikcie bankrotu.
-V tejto časti si opíšeme jednu z metód, ktorú použijeme, a to \emph{bayesian averaging of classical estimates} (\emph{BACE}).
+V tejto časti si opíšeme jednu z metód, ktorú použijeme, a to \emph{Bayesian averaging of classical estimates} (\emph{BACE}).
 
 Základná metóda \emph{BACE} bola vybudovaná za účelom vytvorenia lineárnej regresie, ale jej hlavnú ideu možno ľahko využiť aj pri logistickej regresii.
-Názov \emph{bayesian averaging of classical estimates} vznikol na základe toho, že metóda BACE využíva bayesovské priemerovanie modelov (\emph{angl. bayesian averaging}) a klasické odhady parametrov lineárnej regresie metódou najmenších štvorcov.
+Názov \emph{Bayesian averaging of classical estimates} vznikol na základe toho, že metóda BACE využíva bayesovské priemerovanie modelov (angl. \emph{Bayesian averaging}) a klasické odhady parametrov lineárnej regresie metódou najmenších štvorcov.
 
 \subsubsection{Bayesovská štatistika}
 
@@ -152,9 +171,9 @@ V klasickej štatistike predpokladáme, že parametre majú pevnú, ale neznámu
 Neznáme parametre v klasickej štatistike nie sú náhodnými premennými a nemajú pravdepodobnostnú hustotu.
 Narozdiel od toho v bayesovskej štatistike považujeme parametre za náhodné premenné, pričom ich náhodnosť zodpovedá miere neistoty, ktorú o danom parametri máme.
 
-\subsubsection{Bayesovské priemerovanie modelov (bayesian model averaging)}
+\subsubsection{Bayesovské priemerovanie modelov (\emph{Bayesian model averaging})}
 
-Jedným zo základných tvrdení bayesovskej štatistiky je tzv. bayesovo pravidlo, ktoré hovorí nasledovne:
+Jedným zo základných tvrdení bayesovskej štatistiky je tzv. Bayesovo pravidlo, ktoré hovorí nasledovne:
 
 \[
 P(A|B) = \frac{P(B|A) P(A)}{P(B)}.
@@ -167,15 +186,15 @@ Bayesovo pravidlo možno zovšeobecniť pre spojité náhodné premenné a ich h
 \end{equation}
 
 Aplikujme vzorec (\ref{bayes_rule}) na premenné, ktoré vystupujú v logistickej regresii.
-\( \beta \) je vektor parametrov (intercept a koeficienty jednotlivých vysvetľujúcich premenných),
-\( g(\beta) \) je jeho apriórna hustota, ktorú interpretujeme ako presvedčenie výskumníka o parametri \( \beta \) predtým, než spoznáme dáta.
-\( y \) je vektor nameraných dát, \( f(y) \) je jeho hustota.
+Nech \( \beta \) je vektor parametrov (intercept a koeficienty jednotlivých vysvetľujúcich premenných),
+\( g(\beta) \) je jeho apriórna hustota, ktorú interpretujeme ako presvedčenie výskumníka o parametri \( \beta \) predtým, než spoznáme dáta,
+\( y \) nech je vektor nameraných dát a \( f(y) \) jeho hustota.
 \( g(\beta | y) \) je aposteriórna hustota parametra \( \beta \) (hustota podmienená nameranými dátami \( y \)) a predstavuje presvedčenie výskumníka o parametri \( \beta \) po tom, ako spoznáme dáta \( y \).
 Bayesovo pravidlo hovorí o tom, ako skombinovať apriórnu informáciu \( g \) s nameranými dátami \( y \) a spočítať naše konečné presvedčenie o parametri \( \beta \) – jeho aposteriórnu hustotu \( g(\beta|y) \).
 
-Majme množinu \( X = \{X_1, \ldots X_k\} \) potenciálnych vysvetľujúcich premenných pre model logistickej regresie.
+Majme množinu \( X = \{X_1, \ldots,  X_k\} \) potenciálnych vysvetľujúcich premenných pre model logistickej regresie.
 Pri skúmaní signifikantnosti jednotlivých premenných \( X_1, \ldots, X_k \) máme možnosť danú premennú do modelu zaradiť alebo nezaradiť,
-existuje teda celkovo \( 2^k \) modelov so všetkými možnými kombináciami parametrov \( X_1, \ldots, X_k \).
+existuje teda celkovo \( 2^k \) modelov so všetkými možnými kombináciami vysvetľujúcich premenných \( X_1, \ldots, X_k \).
 (\( M_i \) môže byť reprezentované napr. binárnym vektorom dĺžky \(k\), pričom hodnota na mieste \( j = 1, \ldots, k \) hovorí o zaradení, resp. nezaradení \(j\)-tej vysvetľujúcej premennej do modelu.)
 
 Výskumník zvolí apriórne pravdepodobnosti \( p(M_i) \), pričom \( \sum p(M_i) = 1 \) (problematikou voľby apriórnych pravdepodobností sa budeme zaoberať neskôr).
@@ -194,26 +213,26 @@ Pre aposteriórne pravdepodobnosti vyzerá vzorec nasledovne:
 kde \(p(M_i|y)\) je aposteriórna pravdepodobnosť modelu \(M_i\) po tom, čo spoznáme dáta \(y\).
 Vzorec (\ref{posterior_probabilities}) hovorí, že aposteriórne rozdelenie parametra \(\beta\) je váženým priemerom aposteriórnych hustôt parametra beta podmienených modelom \(M_i\),
 s váhami rovnými aposteriórnym pravdepodobnostiam modelov \(M_i\).
-Takýto prístup zakomponovania neistôt modelov do výpočtu hľadanej veličiny sa nazýva \emph{bayesian model averaging} (\emph{BMA}).
+Takýto prístup zakomponovania neistôt modelov do výpočtu hľadanej veličiny sa nazýva \emph{Bayesian model averaging} (\emph{BMA}).
 
-Keď poznáme aposteriórne pravdepodobnosti (resp. váhy) modelov \( M_i \), umožní nám to výpočet strednej hodnoty parametra \( \beta \).
+Keď poznáme aposteriórne pravdepodobnosti (resp. váhy) modelov \( M_i \), umožní nám to výpočet strednej hodnoty parametra \( \beta \):
 
 \begin{equation} \label{posterior_expected_value}
-    E(\beta | y) = \sum_{i = 1}^{2^k} p(M_i | y) \hat{\beta},
+    E(\beta | y) = \sum_{i = 1}^{2^k} p(M_i | y) \hat{\beta}^{(i)},
 \end{equation}
 
-kde \( \hat{\beta}_i = E(\beta |y, M_i) \) je odhad parametra \( \beta \) pri použití modelu \( M_i \) metódou maximálnej vierohodnosti
+kde \( \hat{\beta}^{(i)} = E(\beta |y, M_i) \) je odhad parametra \( \beta \) pri použití modelu \( M_i \) metódou maximálnej vierohodnosti
 (pozn.: pôvodná metóda BACE pracovala s lineárnou regresiou, kde odhad metódou maximálnej vierohodnosti je vlastne jednoznačný \emph{klasický} odhad metódou najmenších štvorcov;
 v prípade logistickej regresie parameter odhadujeme iteračnou metódou).
 
 Aposteriórna disperzia parametra beta je daná vzorcom:
 
 \[
-    D(\beta | y) = \sum_{i = 1}^{2^k} p(M_i | y) D(\beta | y, M_i) + \sum_{i = 1}^{2^k} p(M_i | y) \left( \hat{\beta}_i - \sum_{i = 1}^{2^k} p(M_i | y) \hat{\beta}_i \right)^2.
+    D(\beta | y) = \sum_{i = 1}^{2^k} p(M_i | y) D(\beta | y, M_i) + \sum_{i = 1}^{2^k} p(M_i | y) \left( \hat{\beta}^{(i)} - \sum_{i = 1}^{2^k} p(M_i | y) \hat{\beta}^{(i)} \right)^2.
 \]
 
 Poznanie aposteriórnych hustôt modelov navyše umožňuje výpočet aposteriórnej pravdepodobnosti zahrnutia premennej do modelu (\emph{angl. posterior inclusion probability}),
-čo bude jednoducho súčet aposteriórných pravdepodobností modelov obsahujúcich danú vysvetľujúcu premennú.
+čo bude jednoducho súčet aposteriórných pravdepodobností modelov obsahujúcich danú vysvetľujúcu premennú:
 
 \begin{equation} \label{posterior_inclusion_probability}
     p(\beta_j \neq 0 | y) = \sum_{i = 1}^{2^k} p(M_i | y) I_{\beta_{j, i} \neq 0},
@@ -246,7 +265,7 @@ s ktorými pracujeme. Všetky premenné dostanú rovnakú apriórnu pravdepodobn
 Jediná apriórna informácia, ktorú ako výskumníci vložíme do nášho skúmania,
 je samotná hodnota apriórnej pravdepodobnosti zahrnutia premenných.
 Pri jej voľbe využijeme očakávaný počet premenných vo výslednom modeli.
-Ak pri celkovom počte premenných \(K\) označíme priemerný očakávaný počet premenných vo výslednom modeli \(\bar{k}\),
+Ak pri celkovom počte premenných \(K\) označíme priemerný očakávaný počet premenných vo výslednom modeli \(\bar{k}\) a zahrnutie každej dvojice premenných budeme považovať za nezávislé,
 apriórna pravdepodobnosť zahrnutia jednotlivých premenných bude rovná \(\bar{k}/K\).
 
 Jedným z prístupov k voľbe apriórných pravdepodobností je voliť apriórne pravdepodobnosti pre jednotlivé modely,
