@@ -23,7 +23,7 @@ kde \(\hat{\beta}^{(i)}\) je odhad parametra \(\beta\) pre model \(M_i\), a \(p(
     p(M_i | y) = \frac{p(M_i) e^{-\frac{1}{2}BIC(M_i)}}{\sum_{i = 1}^{K} p(M_i) e^{-\frac{1}{2}BIC(M_i)}}.
 \]
 
-Pri prístupe, v ktorom sme enumerovali všetky modeli s \(\bar{k} = 5\) vysvetľujúcimi premennými, je postup priamočiary –
+Pri prístupe, v ktorom sme enumerovali všetky modely s \(\bar{k} = 5\) vysvetľujúcimi premennými, je postup priamočiary –
 spočítať odhady \(\beta\) a hodnoty \emph{BIC} pre všetky modely a dopočítať strednú hodnotu \(\beta\) a aposteriórne pravdepodobnosti zahrnutia premenných.
 V prípade iteračnej metódy, pri ktorej generujeme nové náhodné modely, až kým hodnota odhadu beta neskonverguje,
 treba odhad beta počítať veľakrát počas behu algoritmu, čo robí problém výpočtovo oveľa náročnejším.

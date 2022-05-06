@@ -6,7 +6,7 @@ Na modelovanie použijeme finančné dáta o slovenských firmách dostupné z d
 
 Bankrot predstavuje v populácii firiem zriedkavú udalosť, preto jedným z problémov bude vybrať vhodnú vzorku na natrénovanie modelov.
 Firiem, ktoré za celé obdobie ich existencie neboli v úpadku, je obrovské množstvo, a z tohto množstva použijeme na tréning len malú vzorku – vykonáme tzv. undersampling.
-Rôzne metódy undersamplingu v súvislosti s využitím na bankrotné modely sú opísané napr. v \cite{protopapadakis},
+Rôzne metódy undersamplingu v súvislosti s využitím na bankrotové modely sú opísané napr. v \cite{protopapadakis},
 zo záverov tejto práce však vyplýva, že komplikovanejšie metódy undersamplingu neprinášajú preukázateľne lepšie výsledky než jednoduchý náhodný výber.
 
 Pre zachovanie jednoduchosti vykonáme undersampling podobným spôsobom, akým sa vykonáva vo väčšine prác venovaných problematike kreditného rizika \cite{zmijewski},
@@ -33,9 +33,9 @@ V podobných situáciach je často hodnotnejšia predikcia jednoduchším modelo
 ktorého výstup si vie používateľ skontrolovať a zhodnotiť jeho relevanciu pre daný konkrétny vstup, než predikcia komplikovanejším modelom,
 ktorý sa síce preukázal ako presnejší na nejakej validačnej vzorke, ale je ťažko interpretovateľný aj pre odborníka z praxe.
 
-Pre účely vytvorenia modelu predikcie úpadku sme zvolili logistickú regresiu práve z toho dôvodu,
+Na účely vytvorenia modelu predikcie úpadku sme zvolili logistickú regresiu práve z toho dôvodu,
 že predstavuje kompromis medzi interpretovateľnosťou a predikčnou robustnosťou.
 Oproti diskriminačnej analýze, ktorú využil Altman, je model logistickej regresie o niečo komplikovanejší,
-na druhej strane ale prináša iné výhody ako napr. zmiernenie matematických požiadaviek na vstupné dáta
-či ľahko uchopiteľný obor hôdnot výsledného modelu (interval \([0, 1]\)), a to pri zachovaní jednoduchej interpretovateľnosti jeho parametrov.
-Uvedomme si, že logistická regresia nemusí slúžiť len ako nástroj na predikciu a často sa vytvára za účelom štatistickej interpretácie dát.
+na druhej strane ale prináša iné výhody, ako napr. zmiernenie matematických požiadaviek na vstupné dáta
+či ľahko uchopiteľný obor hodnôt výsledného modelu (interval \([0, 1]\)), a to pri zachovaní jednoduchej interpretovateľnosti jeho parametrov.
+Uvedomme si, že logistická regresia nemusí slúžiť len ako nástroj na predikciu a často sa vytvára s cieľom štatistickej interpretácie dát.

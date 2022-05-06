@@ -1,6 +1,6 @@
 \section{Modelovanie rizika úpadku podnikov}
 
-V tejto kapitole si opíšeme proces vytvorenia modelov logistickej regresie za účelom predikcie rizika úpadku podnikov.
+V tejto kapitole si opíšeme proces vytvorenia modelov logistickej regresie s cieľom predikcie rizika úpadku podnikov.
 
 \subsection{Dáta}
 
@@ -30,8 +30,8 @@ Podrobný opis podmienok na firmy, ktoré zaradíme do trénovacich dát, uvádz
     %     \item 64910
     % \end{itemize}
     % Ide o spoločnosti z odvetvia poisťovníctva a financií, pri ktorých nie je jednotný spôsob výpočtu finančných údajov a ich zaradenie by mohlo negatívne ovplyvniť kvalitu dát.
-    \item Majetok spolu = Spolu vlastné imanie a záväzky (TODO: tomuto nerozumiem)
-    \item Obdobie, za ktoré spoločnosť zverejňuje účtovnú závierku, je jeden rok. Túto podmienku spĺňa drvivá väčšina firiem, ale poslúži nám na očistenie od malého množstva spoločností, ktoré účtovné závierky zverejňujú za obdobie inej dĺžky, kvôli čomu ich finančné údaje môžu mať mierne odlišný charakter.
+    \item Majetok spolu = Spolu vlastné imanie a záväzky. Táto podmienka by mala platiť pre všetky firmy, ktoré majú správne vyplnené účtovné závierky. Ide o základný princíp účtovníctva, podľa ktorého celková hodnota aktív a pasív v závierke musí byť rovnaká.
+    \item Obdobie, za ktoré spoločnosť zverejňuje účtovnú závierku, je jeden rok. Túto podmienku spĺňa drvivá väčšina firiem, ale poslúži nám na očistenie od malého množstva spoločností, ktoré účtovné závierky zverejňujú za obdobie inej dĺžky, v dôsledku čoho ich finančné údaje môžu mať mierne odlišný charakter.
 \end{enumerate}
 
 V pôvodných dátach sa nachádzalo celkovo \(3730\) firiem v úpadku s vyplneným dátumom konkurzného alebo reštrukturalizačného konania, z nich \(1145\) spĺňa podmienky 1 až 5.
@@ -45,7 +45,7 @@ Prosperujúcou firmou v tejto práci rozumieme firmu, ktorá za celé obdobie sv
 Prosperujúcich je väčšina firiem na Slovensku a aby sme sa vyhli problému nevyvážených tried (angl. \emph{unbalanced classes}),
 na modelovanie rizika úpadku použijeme len časť z nich.
 Firmy zvolíme tak, že ku každej z \(1145\) firiem v úpadku z predošlého kroku dopárujeme jednu prosperujúcu firmu podobného charakteru.
-Podobná metodika je štandardom pri vytváraní bankrotných modelov – využil ju napr. aj Altmann pri vytváraní prvej verzie svojho Z-skóre – a jej výhodou je aj jej jednoduchosť a pochopiteľnosť, viď podkapitolu \ref{model interpretability}.
+Podobná metodika je štandardom pri vytváraní bankrotových modelov – využil ju napr. aj Altmann pri vytváraní prvej verzie svojho Z-skóre – a jej výhodou je aj jej jednoduchosť a pochopiteľnosť, viď podkapitolu \ref{model interpretability}.
 
 Firmy, z ktorých sme vyberali dvojičku pre firmy v úpadku, museli okrem podmienok 1 až 5 z predošlej podkapitoly spĺňať aj nasledovné podmienky:
 
@@ -54,7 +54,7 @@ Firmy, z ktorých sme vyberali dvojičku pre firmy v úpadku, museli okrem podmi
     \item Firma má vyplnené všetky finančné údaje, ktoré vstupujú do procesu vytvárania modelu (t.j. všetkých \(70\) finančných údajov, z ktorých len časť bude vystupovať vo finálnom modeli logistickej regresie).
 \end{enumerate}
 
-Podmienka 1 bola zvolená za účelom odseparovania firiem, ktoré sú neaktívne alebo príliš drobné.
+Podmienka 1 bola zvolená s cieľom odseparovania firiem, ktoré sú neaktívne alebo príliš drobné.
 Hranicu \(5000\) € sme zvolili arbitrárne na základe analýzy veľkosti tržieb, z ktorej vyplynulo, že značná časť firiem má tržby blízke nule a nehodia sa na zaradenie do skupiny prosperujúcich firiem.
 
 Ku každej z \(1145\) firiem v úpadku sme priradili jednu prosperujúcu firmu tým spôsobom,
@@ -64,7 +64,7 @@ Pre jednu z týchto firiem neexistovala žiadna firma pôsobiaca v rovnakom odve
 Tejto firme sme priradili firmu z podobného odvetvia s SK NACE kódom 08990 (Iná ťažba a dobývanie i.n.).
 
 Vo finálnom datasete máme dokopy \(2290\) firiem, z toho \(1145\) prosperujúcich a \(1145\) v úpadku.
-Pre účely modelovania a následného vyhodnocovania modelov sme tieto dáta rozdelili na trénovaciu a testovaciu sadu v pomere \(80:20\),
+Na účely modelovania a následného vyhodnocovania modelov sme tieto dáta rozdelili na trénovaciu a testovaciu sadu v pomere \(80:20\),
 pričom v každej z nich bol pomer prosperujúcich firiem a firiem v úpadku \(50:50\).
 
 V ďalších častiach vytvoríme samotné modely logistickej regresie. Hlavným problémom je vyčlenenie najsignifikantnejších premenných pre predikciu bankrotu.
@@ -90,11 +90,11 @@ Cieľom metódy \emph{lasso} je nájsť parameter \(\hat{\beta}\) spĺňajúci
 \]
 
 Parameter \(\lambda\) určuje stupeň regularizácie – pri vyšších hodnotách \(\lambda\) metóda vynuluje viac parametrov a naopak.
-Parameter \(\lambda\) je v metóde \emph{lasso} voľným parametrom, a jeho hodnota bola zvolená použitím krosvalidácie typu \emph{leave one out},
+Parameter \(\lambda\) je v metóde \emph{lasso} voľným parametrom a jeho hodnota bola zvolená použitím krosvalidácie typu \emph{leave one out},
 teda pre testovaciu sadu veľkosti \(1832\) (\(916\) firiem v úpadku, \(916\) prosperujúcich) bolo vytvorených \(1832\) regresií,
 pričom pri každej bola vylúčená jedna firma, na ktorej sa daná regresia otestovala.
 
-Parametre, ktorým metóda \emph{lasso} pridelila nenulovú hodnotu (a teda ich zaradila do finálneho modelu logistickej regresie) sú uvedené v tabuľke \ref{lasso tabulka vsetky parametre}.
+Parametre, ktorým metóda \emph{lasso} pridelila nenulovú hodnotu (a teda ich zaradila do finálneho modelu logistickej regresie) sú uvedené v tabuľke č. \ref{lasso tabulka vsetky parametre}.
 Parametrov s nenulovým koeficientom je \(14\).
 
 \begin{table}
@@ -122,9 +122,9 @@ Parametrov s nenulovým koeficientom je \(14\).
 Dodatočnou analýzou sme množinu premenných v modeli okresali ešte viac.
 Premenné INDEX 05 a Binkertov model predstavujú hodnotenie finančnej kondície firmy inými modelmi, nepredstavujú teda rýdzo finančný údaj a do modelu sa nehodia.
 Premenné Likvidita 1. stupňa a Likvidita 3. stupňa sú vysoko korelované a vybrali sme z nich len Likviditu 3. stupňa,
-lebo tej priadil \(t\)-test signifikantnosti parametra výrazne nižšiu \(p\)-hodnotu, a teda ju môžeme považovať za signifikantnejšiu premennú.
+lebo tej priradil \(t\)-test signifikantnosti parametra výrazne nižšiu \(p\)-hodnotu, a teda ju môžeme považovať za signifikantnejšiu premennú.
 
-Vylúčenie ďalších troch parametrov (\emph{EBITDA}, \emph{Čistý prevádzkový zisk po zdanení}, a \emph{Čistý dlh}) vyplynulo z ďalšej analýzy,
+Vylúčenie ďalších troch parametrov (\emph{EBITDA}, \emph{Čistý prevádzkový zisk po zdanení} a \emph{Čistý dlh}) vyplynulo z ďalšej analýzy,
 pri ktorej sme skúmali výstupy modelu pre širšiu množinu firiem, mimo trénovacej a testovacej sady.
 Tieto tri premenné sú hodnoty v eurách a tým, že pri veľkých firmách nadobúdajú tieto hodnoty extrémne veľkosti,
 malo to za následok to, že veľkým firmám dávala logistická regresia výstup blízky k \(0\) alebo k \(1\).
@@ -132,7 +132,7 @@ Hodnotenia scoringovými modelmi sú často zaujímavé práve pre väčšie fir
 Dodatočnú analýzu možného spracovania premenných s extrémnymi hodnotami (napr. zlogaritmovaním) sme nevykonali.
 
 Ďalšie dve premenné, Obrat aktív a Spolu majetok (zmena v \%), sme vylúčili, pretože \(t\)-test signifikantnosti parametra zamietol ich významnosť na hladine \(\alpha = 0.05\).
-Konečnú skupinu šiestich premenných, ktoré vstupujú do modelu vytvoreného pomocou metódy \(lasso\), uvádzame spolu s ich koeficientami v tabuľke \ref{lasso tabulka konecne parametre}.
+Konečnú skupinu šiestich premenných, ktoré vstupujú do modelu vytvoreného pomocou metódy \(lasso\), uvádzame spolu s ich koeficientami v tabuľke č. \ref{lasso tabulka konecne parametre}.
 
 \begin{table}
     \begin{tabular}{ |c|c| }
@@ -160,7 +160,7 @@ Konečnú skupinu šiestich premenných, ktoré vstupujú do modelu vytvoreného
 
 Koeficienty boli spočítané novým natrénovaním modelu na trénovacej sade,
 metódu \emph{lasso} sme teda využili len pri skúmaní signifikantnosti jednotlivých premenných.
-Vzorec pre výpočet skóre týmto modelom má nasledovný tvar:
+Vzorec na výpočet skóre týmto modelom má nasledovný tvar:
 
 \[
     \text{score}_\text{lasso} = \frac{1}{1 + e^{-(-0.654 - 0.0018X_1 + 0.734X_2 - 0.060X_3 - 3.102X_4 - 1.841X_5 + 0.000002X_6)}},
@@ -184,7 +184,7 @@ kde
 \label{modely bace}
 
 V ďalšej časti budeme hľadať vhodnú kombináciu premenných modelu predikcie bankrotu metódou \emph{BACE} (\emph{bayesian averaging of classical estimates}).
-Metóda \emph{BACE} patrí k heuristickým metódam, ku ktorým možno pristupovať rôznymi spôsobmi, my využijeme dva rôzne prístupy.
+Metóda \emph{BACE} patrí k heuristickým metódam, ku ktorým možno pristupovať rôznymi spôsobmi. My využijeme dva rôzne prístupy.
 Prvý prístup bude replikáciou metodiky využitej v práci \cite{ondrusekova}, v ktorej autorka enumerovala všetky modely logistickej regresie so \(4\), \(5\) a \(6\) parametrami
 a z ich výstupov spočítala bayesovské odhady parametra \(\beta\) a jeho aposteriórnu pravdepodobnosť.
 Táto práca, rovnako ako naša, sa zaoberala problematikou predikcie bankrotu v slovenskom prostredí.
@@ -210,7 +210,7 @@ Po vylúčení modelov s korelovanými premennými nám ostalo \(12774840\) mode
 
 Po enumerácii koeficientov modelov a ich BIC sme dopočítali aposteriórne pravdepodobnosti modelov a premenných.
 Kompletný zoznam premenných s ich apriórnymi a aposteriórnymi pravdepodobnosťami, pri použití metódy BACE prístupom kompletnej enumerácie, uvádzame v prílohe \hyperref[appendix:c]{C}.
-V tabuľke \ref{bace1 tabulka pp} uvádzame len tie premenné, ktorých spočítaná aposteriórna pravdepodobnosť zahrnutia bola vyššia ako ich apriórna pravdepodobnosť zahrnutia.
+V tabuľke č. \ref{bace1 tabulka pp} uvádzame len tie premenné, ktorých spočítaná aposteriórna pravdepodobnosť zahrnutia bola vyššia ako ich apriórna pravdepodobnosť zahrnutia.
 Takých premenných bolo celkovo \(7\).
 Uvedomme si, že apriórna pravdepodobnosť zahrnutia premenných nebola v tomto prípade vždy rovná presne \(\frac{5}{74}\),
 pretože niektoré modely s \(5\) premennými sme vylúčili, čo malo za následok miernu zmenu hodnoty apriórnej pravdepodobnosti zahrnutia niektorých premenných.
@@ -244,7 +244,7 @@ z akých sme túto premennú vylúčili pri modeli \emph{lasso}, \emph{Návratno
 že z dvojice vysoko korelovaných premenných spolu s premennou \emph{Návratnosť aktív} mala \emph{Návratnosť aktív (EBIT)} nižšiu aposteriórnu pravdepodobnosť.
 
 Koeficienty vo výslednom modeli boli spočítané pomocou vzorca (\ref{posterior_expected_value}), pričom sme sumovali len cez modely s piatimi premennými.
-Koeficienty pri premenných uvázame v tabuľke \ref{bace1 tabulka konecne parametre}.
+Koeficienty pri premenných uvádzame v tabuľke č. \ref{bace1 tabulka konecne parametre}.
 
 \begin{table}
     \begin{tabular}{ |c|c| }
@@ -268,7 +268,7 @@ Koeficienty pri premenných uvázame v tabuľke \ref{bace1 tabulka konecne param
     \label{bace1 tabulka konecne parametre}
 \end{table}
 
-Vzorec pre výpočet skóre týmto modelom má nasledovný tvar:
+Vzorec na výpočet skóre týmto modelom má nasledovný tvar:
 
 \[
     \text{score}_\text{BACE1} = \frac{1}{1 + e^{-(0.176X_1 - 0.607X_2 - 2.942X_3 - 1.167X_4 + 0.000067X_5)}}
@@ -309,7 +309,7 @@ pri ďalších modeloch používali pri náhodnom výbere odhady aposteriórnych
 (pričom ich ale ohraničili intervalom \([0.1, 0.85]\)).
 Dôvodom bola skutočnosť, že pri takomto prístupe konverguje algoritmus rýchlejšie.
 V našej práci sme pre zachovanie jednoduchosti túto metódu nepoužili.
-Podobný prístup si vyžaduje voľbu viacerých hyperparametrov, ktoré majú viacmenej arbitrárny charakter, a tým by si sa celý proces skomplikoval.
+Podobný prístup si vyžaduje voľbu viacerých hyperparametrov, ktoré majú viac-menej arbitrárny charakter, a tým by si sa celý proces skomplikoval.
 Navyše, algoritmus by mal skonvergovať pri akejkoľvek voľbe apriórnych pravdepodobností.
 
 Na implementáciu iteračnej metódy \emph{BACE} sme použili softvér \emph{R}, výpočtovým aspektom metódy sa venujeme bližšie v prílohe \hyperref[appendix:e]{E}.
@@ -343,7 +343,7 @@ Na implementáciu iteračnej metódy \emph{BACE} sme použili softvér \emph{R},
 \end{table}
 
 Algoritmus skonvergoval po enumerácii 38720000 modelov logistickej regresie.
-V tabuľke \ref{bace2 tabulka pp} uvádzame aposteriórne pravdepodobnosti zahrnutia a odhady stredných hodnôt koeficientov pre tie premenné,
+V tabuľke č. \ref{bace2 tabulka pp} uvádzame aposteriórne pravdepodobnosti zahrnutia a odhady stredných hodnôt koeficientov pre tie premenné,
 pre ktoré aposteriórna pravdepodobnosť bola vyššia ako ich apriórna pravdepodobnosť zahrnutia.
 Kompletný zoznam premenných aj s odhadom strednej hodnoty ich koeficientov uvádzame v prílohe \hyperref[appendix:d]{D}.
 
@@ -369,13 +369,13 @@ Kompletný zoznam premenných aj s odhadom strednej hodnoty ich koeficientov uv�
     \label{bace2 tabulka konecne parametre}
 \end{table}
 
-Vo výslednom modeli sme nepoužili všetky premenné z tabuľky \ref{bace2 tabulka pp}.
+Vo výslednom modeli sme nepoužili všetky premenné z tabuľky č. \ref{bace2 tabulka pp}.
 Dodatočne sme vylúčili premenné \emph{Účtovný cash flow}, \emph{Čistý prevádzkový zisk po zdanení (NOPAT)} a a \emph{Čistý dlh},
 pretože ide o hodnoty v eurách a pri veľkých firmách nadobúdali extrémne hodnoty, ktoré ťahali výstup vzorca blížko k \(0\) alebo \(1\).
 Z dvojice vysoko korelovaných premenných \emph{Návratnosť aktív} a \emph{Návratnosť aktív (EBIT)} mala druhá menovaná vyššiu aposteriórnu pravdepodobnosť zahrnutia,
 preto sme do výsledného modelu zaradili ju.
 
-Zoznam koeficientov pri vybraných premenných uvádzame v tabuľke \ref{bace2 tabulka konecne parametre}.
+Zoznam koeficientov pri vybraných premenných uvádzame v tabuľke č. \ref{bace2 tabulka konecne parametre}.
 Výsledný model logistickej regresie vytvorený touto metódou je daný vzorcom:
 
 \[
@@ -401,7 +401,7 @@ kde
 V tejto časti porovnáme prediktívnu schopnosť troch nami vytvorených logistických regresií a dvoch zaužívaných skóringových modelov – Altmanovho Z-skóre a indexu IN05.
 Porovnávať budeme na testovacej vzorke \(458\) firiem, z ktorých v polovici prípadov ide o firmy, ktoré nasledujúce účtovné obdobie po zbere dát vyhlásili bankrot.
 
-V tabuľke \ref{tabulka_metrik} uvádzame pre jednotlivé modely nasledovné metriky:
+V tabuľke č. \ref{tabulka_metrik} uvádzame pre jednotlivé modely nasledovné metriky:
 presnosť, senzitivita (pravdepodobosť správnej predikcie pre firmu v bankrote), špecificita (pravdepodobnosť správnej predikcie pre prosperujúcu firmu), AUC (plocha pod ROC krivkou modelu).
 Pri modeloch logistickej regresie sme za hranicu predikcie bankrotu zobrali hodnotu \(0.5\) (t.j. modely predikujú bankrot, ak ich výstupom je hodnota väčšia ako \(0.5\)).
 Pri Altmanovom Z-skóre a indexe IN05, ktorých obôr hodnôt narozdiel od logistickej regresie nie je interval \((0, 1)\), sme hranicu volili dvoma spôsobmi:

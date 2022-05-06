@@ -2,7 +2,7 @@
 \label{bankruptcy}
 
 Cieľom tejto práce je vytvoriť model na predikciu úpadku firiem na základe jej finančných údajov.
-Pre účely modelovania si na začiatok zadefinujme, čo budeme rozumieť pod pojmom úpadok.
+Na účely modelovania si na začiatok zadefinujme, čo budeme rozumieť pod pojmom úpadok.
 Problematikou bankrotu právnických a fyzických osôb na Slovensku sa venuje najmä zákon 7/2005 Z. z. o konkurze a reštrukuturalizácii \cite{zbierkazakonov},
 ktorý definuje úpadok nasledovne.
 
@@ -31,16 +31,16 @@ V prípade, že reštrukturalizácia bude úspešná, právnická osoba može na
 avšak predpokladom jej úspechu je to, že pohľadávky veriteľov sa budú počas ďalšieho fungovania podniku uspokojovať vo vyššej miere ako v prípade konkurzu.
 
 Spoločným znakom konkurzu a reštrukturalizácie je skutočnosť, že dlžník sa nachádza v krízovej ekonomickej situácii.
-Pre účely tejto práce budeme \emph{bankrotom} rozumieť začiatok konkurzného alebo reštrukturalizačného konania.
+Na účely tejto práce budeme \emph{bankrotom} rozumieť začiatok konkurzného alebo reštrukturalizačného konania.
 
-\subsection{Bankrot - vzácna udalosť}
+\subsection{Bankrot - zriedkavá udalosť}
 
-Úpadok alebo bankrot možno považovať v rámci populácie aktívnych firiem za vzácnu udalosť.
+Úpadok alebo bankrot možno považovať v rámci populácie aktívnych firiem za zriedkavú udalosť.
 Databáza \emph{FinStat}, ktorej dáta budeme využívať v tejto práci, eviduje celkovo 6946 prípadov konkurzného alebo reštrukturalizačného konania za obdobie existencie samostatnej Slovenskej republiky.
-Ako uvidíme, nie každé z týchto konaní sa hodí na modelovanie, či už kvôli nedostatku dostupných dát alebo inej príčiny.
+Ako uvidíme, nie každé z týchto konaní sa hodí na modelovanie, či už pre nedostatok dostupných dát alebo inú príčinu.
 
 Napríklad, z počtu 6946 firiem v úpadku len pre 3730 firiem poznáme presný dátum začiatku konkurzného alebo reštrukturalizačného konania.
-Dátum začiatku konania nepoznáme zväčša pre staršie firmy, ktoré zanikli pred rokom 2010, a pre ktoré by sme v mnohých prípadoch aj tak nemali dostatok dát pre úspešné zahrnutie do modelu.
+Dátum začiatku konania nepoznáme zväčša pre staršie firmy, ktoré zanikli pred rokom 2010, a pre ktoré by sme v mnohých prípadoch aj tak nemali dostatok dát na úspešné zahrnutie do modelu.
 
 V tabuľke uvádzame počet konkurzov a reštrukturalizácií a počet aktívnych firiem od roku 2011 po rok 2020.
 
@@ -76,8 +76,5 @@ V tabuľke uvádzame počet konkurzov a reštrukturalizácií a počet aktívnyc
 
 Ako vidíme, počet firiem v úpadku sa každoročne nachádza pod hranicou 0,5 \% z aktívnych firiem.
 Z uvedeného vyplýva, že pri modelovaní úpadku firiem budeme pracovať so silno nevyváženými dátami (angl. \emph{angl. unbalanced classes}).
-Napriek tomu, že bankrot je v populácii firiem vzácny, ide o udalosť, ktorej predpovedanie je zaujímavé pre množstvo strán -
+Napriek tomu, že bankrot je v populácii firiem zriedkavý, ide o udalosť, ktorej predpovedanie je zaujímavé pre množstvo strán -
 napr. pre manažment firiem, majiteľov firemného kapitálu, poskytovateľov pôžičiek, investorov či poisťovateľov.
-
-TODO: bližší opis bankrotov podľa odvetví, veľkosti firiem, potenciálne niečo o vplyve covid pandémie atď. a pod.,
-dá sa tu spraviť veľa deskriptívnej štatistiky

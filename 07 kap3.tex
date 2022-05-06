@@ -5,9 +5,9 @@
  
 Logistická regresia je štatistická metóda využívaná pri binárnej klasifikácii, resp. pri predikcii náhodného binárneho výsledku.
 Cieľom logistickej regresie je modelovať pravdepodobnosť nejakej triedy alebo udalosti (vysvetľovanej premennej)
-na základe jednej alebo viacerých vysvetľujúcich premenných. TODO
+na základe jednej alebo viacerých vysvetľujúcich premenných.
 
-Pred tým, než opíšeme, ako presne logistická regresia funguje, si zadefinujme niekoľko dôležitých pojmov, s ktorými logistická regresia narába.
+Predtým, než opíšeme, ako presne logistická regresia funguje, si zadefinujme niekoľko dôležitých pojmov, s ktorými logistická regresia narába.
 
 \begin{defin}
     Logistická funkcia \( \sigma : \mathbb{R} \rightarrow (0, 1) \) je definovaná ako:
@@ -104,7 +104,7 @@ h_\beta(x) = P(Y = 1|x) = \frac{1}{1 + e^{-\beta^T x}}.
 
 Neznámym parametrom v tomto modeli je vektor \( \beta = (\beta_0, \beta_1, \ldots, \beta_k) \).
 Na odhad parametra \( \beta \) sa vo väčšine prípadov používa metóda maximálnej vierohodnosti.
-Na rozdiel od obyčajnej lineárnej regresie s normálne rozdelenými chybami,
+Na rozdiel od obyčajnej lineárnej regresie s normálne rozdelenými chybami
 v logistickej regresii nie je možné nájsť exaktné analytické vyjadrenie odhadu parametra \( \beta \) metódou maximálnej vierohodnosti
 a pre konkrétne dáta sa na výpočet tohto odhadu používa nejaká iteračná metóda.
 
@@ -154,7 +154,7 @@ Prirodzene, nie všetky z nich sa hodia na modelovanie bankrotu.
 Naším cieľom bude vytvoriť model, ktorý bude relatívne jednoduchý, a v ktorom budú vystupovať len tie najsignifikantnejšie vysvetľujúce premenné z hľadiska predikcie bankrotu.
 V tejto časti si opíšeme jednu z metód, ktorú použijeme, a to \emph{Bayesian averaging of classical estimates} (\emph{BACE}).
 
-Základná metóda \emph{BACE} bola vybudovaná za účelom vytvorenia lineárnej regresie, ale jej hlavnú ideu možno ľahko využiť aj pri logistickej regresii.
+Základná metóda \emph{BACE} bola vybudovaná s cieľom vytvorenia lineárnej regresie, ale jej hlavnú ideu možno ľahko využiť aj pri logistickej regresii.
 Názov \emph{Bayesian averaging of classical estimates} vznikol na základe toho, že metóda BACE využíva bayesovské priemerovanie modelov (angl. \emph{Bayesian averaging}) a klasické odhady parametrov lineárnej regresie metódou najmenších štvorcov.
 
 \subsubsection{Bayesovská štatistika}
@@ -162,7 +162,7 @@ Názov \emph{Bayesian averaging of classical estimates} vznikol na základe toho
 Metóda \emph{BACE} narába s teóriou bayesovskej štatistiky.
 V klasickej štatistike predpokladáme, že parametre majú pevnú, ale neznámu hodnotu.
 Neznáme parametre v klasickej štatistike nie sú náhodnými premennými a nemajú pravdepodobnostnú hustotu.
-Narozdiel od toho v bayesovskej štatistike považujeme parametre za náhodné premenné, pričom ich náhodnosť zodpovedá miere neistoty, ktorú o danom parametri máme.
+Na rozdiel od toho v bayesovskej štatistike považujeme parametre za náhodné premenné, pričom ich náhodnosť zodpovedá miere neistoty, ktorú o danom parametri máme.
 
 \subsubsection{Bayesovské priemerovanie modelov (\emph{Bayesian model averaging})}
 
@@ -477,7 +477,7 @@ a \(\hat{L}\) je maximum pravdepodobnostnej funkcie modelu pre dané dáta \(X_{
 
 \subsubsection{Implementácia metódy \emph{BACE}}
 
-V ideálnom svete by sme pre pre \(k\) potenciálnych vysvetľujúcich premenných vyčíslili všetkých \(2^k\) modelov,
+V ideálnom svete by sme pre \(k\) potenciálnych vysvetľujúcich premenných vyčíslili všetkých \(2^k\) modelov,
 čo by nám poskytlo presný výsledok pre aposteriórne pravdepodobnosti modelov a posteriórne pravdepodobnosti zahrnutia premenných (pri predpodkladaných apriórnych pravdepodobnostiach).
 V praxi býva \(2^k\) príliš veľké na takúto úplnú enumeráciu (angl. \emph{exhaustive enumeration}) – v pôvodnom článku Sala-i-Martina pracovali autori s \(k = 32\) premennými, my máme premenných \(74\).
 

@@ -106,12 +106,12 @@ pri nameranej senzitivite týchto modelov v rozmedzí 70-90 \% by to znamenalo, 
 Takéto závery samozrejme nie sú správne. Skutočnosť, že modely predikcie bankrotu majú tendenciu prikláňať sa k triede firiem v bankrote,
 vyplýva práve z nerovnakosti podielu firiem v bankrote v rámci trénovacej vzorky a celej populácie.
 Možným vysvetlením tohto javu môže byť to, že trieda prosperujúcich firiem v trénovacej sade je málo reprezentovaná.
-V prípade párovacej metódy sa prosperujúce firmy v trénovacej sade silno obmedzujú len na tie firmy, ktoré majú podobné vlastnosti firmám v bankrote,
+V prípade párovacej metódy sa prosperujúce firmy v trénovacej sade silno obmedzujú len na tie firmy, ktoré majú podobné vlastnosti ako firmy v bankrote,
 z čoho zrejme vyplýva existencia veľkej množiny prosperujúcich firiem, ktoré v trénovacej sade nemajú reprezentanta ani zo svojho širšieho okolia (v zmysle podobnosti finančných ukazovateľov).
 Navyše, je pravdepodobné, že práve táto nereprezentovaná skupina obsahuje mnoho firiem, ktoré by boli dobrým reprezentantom \emph{skutočne} prosperujúcich firiem
-(prosperujúcich nielen v tom zmysle, že nikdy nevyhlásili bankrot ani reštrukturalizáciu, čo je definícia, ktorú sme zaviedli pre účely tejto práce).
+(prosperujúcich nielen v tom zmysle, že nikdy nevyhlásili bankrot ani reštrukturalizáciu, čo je definícia, ktorú sme zaviedli na účely tejto práce).
 
-Tendenciou bankrotných modelov prikláňať sa k triede firiem v bankrote sa zaoberal už Zmijewski v práci z roku 1984 \cite{zmijewski}, ktorú sme citovali už viackrát.
+Tendenciou bankrotových modelov prikláňať sa k triede firiem v bankrote sa zaoberal už Zmijewski v práci z roku 1984 \cite{zmijewski}, ktorú sme citovali už viackrát.
 
 Pri zjavných limitáciách párovacej metódy pri výbere trénovacej sady dát vyvstáva otázka, či by nebolo vhodnejšie použiť iný prístup.
 Rôznym metódam výberu trénovacej sady v problematike predikcie kreditného rizika sa zaoberá \cite{protopapadakis}.
@@ -215,4 +215,4 @@ a apriórna korekcia:
 \label{model_bace_whole_pop_corrected}
 \end{figure}
 
-Obrázok \ref{model_bace_whole_pop_corrected} predstavuje histogram výstupov upraveného BACE modelu, pri znížení interceptu \( \beta_0 \) o hodnotu \( \delta = 5.92785 \).
+Obrázok \ref{model_bace_whole_pop_corrected} predstavuje histogram výstupov upraveného BACE modelu pri znížení interceptu \( \beta_0 \) o hodnotu \( \delta = 5.92785 \).
