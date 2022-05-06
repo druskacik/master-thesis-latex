@@ -15,13 +15,13 @@ pričom dopárovanie vykonáme na základe zhody odvetvia a podobnosti tržieb.
 
 V ďalšej časti sa zameriame na vytvorenie modelu logistickej regresie na predikciu bankrotu firmy.
 Počet údajov (parametrov) v databáze \emph{FinStat} dostupných pre každú jednu firmu je vyše 70, nie všetky z týchto parametrov sa ale hodia na predikciu bankrotu.
-Na výber najsignifikantnejších ukazovateľov použijeme dve metódy – LASSO (\emph{least absolute shrinkage and selection operator}) a bayesovské priemerovanie modelov.
+Na výber najsignifikantnejších ukazovateľov použijeme dve metódy – lasso (\emph{least absolute shrinkage and selection operator}) a bayesovské priemerovanie modelov.
 
 \subsection{Interpretovateľnosť ako sila logistickej regresie} \label{model interpretability}
 
 Odkedy Edward Altman v roku 1968 uverejnil prvý článok o svojom Z-skóre, bolo na tému predikcie úpadku napísaných desiatky ďalších prác.
 Napriek tomu, že mnohé z týchto analýz vyústili do modelov, ktoré mali preukázateľne lepšiu predikčnú schopnosť ako Z-skóre,
-Altmanov model diskriminačnej analýzy patrí dodnes medzi najpoužívanejšie a najcitovanejšie modely kreditného rizika [TODO: zdroj?].
+Altmanov model diskriminačnej analýzy patrí dodnes medzi najpoužívanejšie a najcitovanejšie modely kreditného rizika. % [TODO: zdroj?].
 
 Dôvodov pre túto skutočnosť je niekoľko, ale najvýraznejším argumentom pre Altmanovo Z-skóre je jeho relatívna jednoduchosť (pracuje len s 5 údajmi)
 a z nej vyplývajúca široká aplikovateľnosť Z-skóre pre mnohé odvetvia či krajiny.

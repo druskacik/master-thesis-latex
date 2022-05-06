@@ -83,7 +83,7 @@ Logistická regresia predpokladá, že logaritmus pomeru šancí (angl. \emph{lo
 \ln \left( \frac{P(Y = 1|x)}{P(Y = 0|x)} \right) = \ln \left( \frac{P(Y = 1|x)}{1 - P(Y = 1|x)} \right) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_k x_k = \beta^T x.
 \]
 
-Po úpravách sa ľahko dopracujeme k záveru, že pravdepodobnosť \( P(Y = 1|x) \) je rovná výstupu logistickej funkcie, ktorej argument bude hľadaná lineárna kombinácia zložiek vektora \( x \).
+Po úpravách sa ľahko dopracujeme k záveru, že pravdepodobnosť \( P(Y = 1|x) \) je rovná výstupu logistickej funkcie, ktorej argument bude hľadaná lineárna kombinácia zložiek vektora \( x \):
 
 \begin{equation} \label{logistic_regression}
 P(Y = 1|x) = \frac{1}{1 + e^{-\beta^T x}} := h_\beta(x).
@@ -111,7 +111,7 @@ a pre konkrétne dáta sa na výpočet tohto odhadu používa nejaká iteračná
 Keďže \(Y\) nadobúda len hodnoty z \( \{0, 1\} \), pre vierohodnostnú funkciu \(Y\) platí:
 
 \[
-P(y | x; \beta ) = h_\beta(x)^y (1 - h_\beta(x))^{1 - y}
+P(y | x; \beta ) = h_\beta(x)^y (1 - h_\beta(x))^{1 - y}.
 \]
 
 Majme namerané vektory dát \( x_1, \ldots, x_n \), kde \( x_i = (1, x_{i1}, \ldots, x_{ik}) \),
@@ -133,15 +133,15 @@ a k nim prislúchajúci vektor nameranej vysvetľovanej premennej \(y = (y_1, \l
 Potom pre funkciu vierohodnosti parametra \( \beta \) platí
 
 \[
-L(\beta | X, y) = \prod_{i = 1}^n h_\beta(x_i)^{y_i} (1 - h_\beta(x_i))^{1 - y_i}
+L(\beta | X, y) = \prod_{i = 1}^n h_\beta(x_i)^{y_i} (1 - h_\beta(x_i))^{1 - y_i}.
 \]
 
-„Trénovanie“\footnote{Používame tu modernú terminológiu strojového učenia; pod trénovaním  modelu rozumieme hľadanie takých hodnôt jeho parametrov, ktoré minimalizujú jeho stratovú funkciu pre nejaké namerané dáta \emph{X}}
+„Trénovanie“\footnote{Používame tu modernú terminológiu strojového učenia; pod trénovaním  modelu rozumieme hľadanie takých hodnôt jeho parametrov, ktoré minimalizujú jeho stratovú funkciu pre nejaké namerané dáta \emph{X}.}
 logistickej regresie spočíva v maximalizovaní funkcie vierohodnosti,
 čo je ekvivalentné maximalizácii jej logaritmu (angl. \emph{log-likelihood function}), a teda hľadáme
 
 \[
-\hat{\beta} := \max_{\beta} \ln L(\beta | y) = \max_{\beta} \sum_{i = 1}^n y_i \ln{h_{\beta}(x_i)} + (1 - y_i) \ln{(1 - h_{\beta}(x_i))}
+\hat{\beta} := \max_{\beta} \ln L(\beta | y) = \max_{\beta} \sum_{i = 1}^n y_i \ln{h_{\beta}(x_i)} + (1 - y_i) \ln{(1 - h_{\beta}(x_i))}.
 \]
 
 Na nájdenie maxima log-likelihood funkcie v prípade logistickej regresie sa používajú iteračné metódy,
@@ -149,7 +149,7 @@ napr. funkcia \emph{glm} v základnej verzii jazyka \emph{R} využíva metódu \
 
 \subsection{Bayesian averaging of classical estimates (BACE)}
 
-Dáta, ktoré budeme spracúvať v našej práci, obsahujú 70 vysvetľujúcich premenných pre každý rok pôsobenia firmy.
+Dáta, ktoré budeme spracúvať v našej práci, obsahujú 74 vysvetľujúcich premenných pre každý rok pôsobenia firmy.
 Prirodzene, nie všetky z nich sa hodia na modelovanie bankrotu.
 Naším cieľom bude vytvoriť model, ktorý bude relatívne jednoduchý, a v ktorom budú vystupovať len tie najsignifikantnejšie vysvetľujúce premenné z hľadiska predikcie bankrotu.
 V tejto časti si opíšeme jednu z metód, ktorú použijeme, a to \emph{Bayesian averaging of classical estimates} (\emph{BACE}).
@@ -225,7 +225,7 @@ Aposteriórna disperzia parametra \(\beta\) je daná vzorcom:
     D(\beta | y) = \sum_{i = 1}^{2^k} p(M_i | y) D(\beta | y, M_i) + \sum_{i = 1}^{2^k} p(M_i | y) \left( \hat{\beta}^{(i)} - \sum_{i = 1}^{2^k} p(M_i | y) \hat{\beta}^{(i)} \right)^2.
 \]
 
-Poznanie aposteriórnych hustôt modelov navyše umožňuje výpočet aposteriórnej pravdepodobnosti zahrnutia premennej do modelu (\emph{angl. posterior inclusion probability}),
+Poznanie aposteriórnych hustôt modelov navyše umožňuje výpočet aposteriórnej pravdepodobnosti zahrnutia premennej do modelu (angl. \emph{posterior inclusion probability}),
 čo bude jednoducho súčet aposteriórných pravdepodobností modelov obsahujúcich danú vysvetľujúcu premennú:
 
 \begin{equation} \label{posterior_inclusion_probability}
@@ -411,7 +411,7 @@ y = X \beta + \epsilon,
 \end{equation}
 
 kde \( \epsilon \sim N(0, \sigma^2 I) \).
-Pri problematike selekcie premenných z množiny celkovo \(k\) potenciálnych premenných pracujeme s \(2^k\) modelmi zodpovedajúcimi každej možnej podmnožine k premenných,
+Pri problematike selekcie premenných z množiny celkovo \(k\) potenciálnych premenných pracujeme s \(2^k\) modelmi zodpovedajúcimi každej možnej podmnožine \(k\) premenných,
 vrátane modelu bez vysvetľujúcich premenných (t.j. len s interceptom) a plného modelu so všetkými \(k\) premennými.
 Priestor všetkých modelov označme \(M = \{ M_1, M_2, \ldots, M_K \} \), \(K = 2^k\).
 
@@ -459,7 +459,7 @@ Aposteriórne rozdelenie pravdepodobnosti \( p(M_i | y) \) reprezentuje mieru ne
 Enumerácia integrálu v (\ref{marginal_y}) býva často náročná úloha.
 V prípade lineárnej regresie existujú voľby apriórnych rozdelení, ktoré vedú k analytickému vyjadreniu integrálu (\ref{marginal_y}) \cite{mcculloch}.
 V našej práci budeme aposteriórne pravdepodobnosti modelov aproximovať vzťahom prevzatým z \cite{jamespress},
-ktorý okrem lineárnej regresie platí aj pre zovšeobecnené linerálne modely (angl. \emph{generalized linear models}):
+ktorý okrem lineárnej regresie platí aj pre zovšeobecnené lineárne modely (angl. \emph{generalized linear models}):
 
 \begin{equation} \label{posterior_model_approximation}
         p(M_i | y) = \frac{p(M_i) e^{-\frac{1}{2}BIC(M_i, y)}}{\sum_{i = 1}^{K} p(M_i) e^{-\frac{1}{2}BIC(M_i, y)}}.

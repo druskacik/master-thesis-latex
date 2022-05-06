@@ -1,1 +1,25 @@
-TODO
+Cieľom práce bolo vytvoriť modely logistickej regresie určené na predikciu bankrotu v slovenskom prostredí.
+Na voľbu vhodných kombinácií parametrov sme použili dve metódy – \emph{lasso} a \emph{BACE} (\emph{Bayesian averaging of classical estimates}).
+Výsledky naznačujú, že naše modely majú v slovenskom prostredí lepšiu predikčnú schopnosť ako zaužívané modely Altmanovo Z-skóre a index IN05.
+
+Pri vytváraní modelov sme kládli vysoký dôraz na jednoduchosť a ľahkú interpretovateľnosť výsledných vzorcov.
+Ukazuje sa, že metóda \emph{BACE}, ktorá medzi štatistikmi pravdepodobne nie je taká známa ako iné metódy voľby modelu,
+môže byť vhodnou metódou práve pri problémoch, kde výskumník dbá na interpretovateľnosť a pochopiteľnosť výsledkov.
+Výstupom metódy sú okrem iného aj aposteriórne pravdepodobnosti zahrnutia jednotlivých vysvetľujúcich premenných do „správneho“ modelu,
+a práve tieto hodnoty môžu mať pre skúmanú oblasť vysokú výpovednú hodnotu.
+
+V ďalšom výskume by sme sa mohli zamerať na rigoróznejšiu analýzu metódy \emph{BACE}, napr. porovnanie dvoch prístupov k jej implementácii
+(kompletná enumerácia vopred danej časti modelov, resp. iteračná metóda náhodne generujúca nové a nové modely).
+Výsledky našej práce naznačujú, že ich výstupy sú veľmi podobné.
+Zaujímavou témou ďalšieho výskumu môže byť porovnanie dvoch implementácií metódy \emph{BACE} v rôznych simulovaných prostrediach.
+
+Modely vytvorené v našej práci nadobúdajú jej zverejnením verejný charakter a môžu byť voľne využité inštitúciami i
+jednotlivcami na ohodnotenie kreditného rizika slovenských firiem.
+Aj z tohto dôvodu sme počas celého výskumu dávali veľký dôraz na to, aby procesy vytvorenia modelov boli čo najtransparentnejšie
+a aby výsledné vzorce mohli byť ľahko interpretovateľné.
+Máme za to, že v niektorých situáciách je vhodnejšie nesústrediť sa len na predikčnú schopnosť matematických modelov,
+ktoré vytvárame, ale dbať aj na to, aby každý jeden výstup nášho modelu bol obhájiteľný.
+To často neplatí pri využití niektorých modernejších štatistických metód, ktorých výstupom býva model tzv. „čiernej skrinky“,
+ktorý síce môže mať vyššiu predikčnú schopnosť, ale jeho interné fungovanie nemusí byť navonok jasné.
+Uvedomme si, že sme to my, matematici, ktorí v konečnom dôsledku nesieme zodpovednosť za výstupy našich modelov.
+Nech aj to je mementom pre výskumníkov, ktorí si vezmú za cieľ vytvorenie verejných matematických modelov.

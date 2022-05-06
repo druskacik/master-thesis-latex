@@ -2,8 +2,8 @@
 
 Jednou z najväčších výziev pri problematike predikcie bankrotu je jeho nízka prevalencia v populácii firiem.
 Aj pri pohľade na iné krajiny je zrejmé, že počet firiem v bankrote každoročne predstavuje takmer vždy menej než 1 \% z celkovej populácie
-firiem v krajine \cite{gruszczynski} (TODO: možno priamo nejaké OECD by som mohol zazdrojovať).
-V reči pravdepodobnosti a štatistiky tento fenomén nazývame problémom nevyvážených tried (angl. \emph{imbalanced classes}).
+firiem v krajine \cite{gruszczynski}. % (TODO: možno priamo nejaké OECD by som mohol zazdrojovať).
+V reči pravdepodobnosti a štatistiky tento fenomén nazývame problémom nevyvážených tried (angl. \emph{unbalanced classes}).
 
 V \cite{gruszczynski} autor definuje dva druhy nevyváženosti v dátach.
 Majme vzorku \(n\) firiem, ktorá obsahuje \(n_1\) firiem v bankrote a \(n_2\) prosperujúcich firiem (prirodzene \(n_1 + n_2 = n\)).
@@ -15,7 +15,8 @@ a) pomer \(n_1\) a \(n_2\) (firiem v bankrote a prosperujúcich firiem) vo vzork
 b) podiely \(p_1 = n_1/n\) a \(p_2 = n_2/n\) sú odlišené od podielov firiem v bankrote a prosperujúcich firiem v populácii.
 \bigskip
 
-Dôsledkami nevyváženosti dát pre problematiku predikcie bankrotu sa venujeme bližšie v tejto kapitole. (TODO: tu by sa hodila ešte jedna-dve vety o a) a b))
+Dôsledkami nevyváženosti dát pre problematiku predikcie bankrotu sa venujeme bližšie v tejto kapitole.
+% (TODO: tu by sa hodila ešte jedna-dve vety o a) a b))
 
 \subsection{„Biases“}
 
@@ -73,7 +74,7 @@ Z celkového počtu \(212169\) vypočítaných pravdepodobností \(40849\) vyšl
 
 Obrázok \ref{altman_whole_pop} predstavuje histogram hodnôt Altmanovho \(Z\)-skóre na tej istej množine (pozn. histogram je očistený o extrémne hodnoty).
 Podľa \(Z\)-skóre je firma v zóne bankrotu, ak \(Z > 2.9\), čo v rámci tejto množiny platí až pre \(90361\) firiem.
-Ak by sme výstup logistickej regresie vyšší než \(0.5\), resp. výstup \(Z\)-skóre vyšší než \(2.9\), vnímali striktne ako prediktor (?) bankrotu,
+Ak by sme výstup logistickej regresie vyšší než \(0.5\), resp. výstup \(Z\)-skóre vyšší než \(2.9\), vnímali striktne ako prediktor bankrotu,
 pri nameranej senzitivite týchto modelov v rozmedzí 70-90 \% by to znamenalo, že v roku 2020 majú vyhlásiť bankrot rádovo desiatky tisíc firiem.
 
 \begin{figure}
@@ -178,17 +179,17 @@ Upraveným pravdepodobnostiam modelu s korekciou napr. \(0,005, 0.01, 0.02, 0.10
 \end{figure}
 
 Databáza Finstatu obsahuje od roku 2009 celkovo \(3730\) prípadov bankrotu so známym dátumom začiatku konkurzného alebo reštrukturalizačného konania,
-pričom za to isté obdobie obsahuje \(1 403 773\) relevantných záznamov o firmách (jedným záznamom rozumieme pôsobenie firmy počas jedného roka).
+pričom za to isté obdobie obsahuje \(3 455 794\) relevantných záznamov o firmách (jedným záznamom rozumieme pôsobenie firmy počas jedného roka).
 Z toho vyplýva prevalencia bankrotu v populácii firiem:
 
 \[
-    \pi = \frac{3730}{1403773} \doteq 0.002657125 \doteq 0.266 \%   
+    \pi = \frac{3730}{3455794} \doteq 0.00107934674 \doteq 0.11 \%   
 \]
 
 a apriórna korekcia:
 
 \[
-    \delta = \ln \left[  \frac{1 - \frac{3730}{1403773}}{\frac{3730}{1403773}} \right] \doteq 5.92785
+    \delta = \ln \left[  \frac{1 - \frac{3730}{3455794}}{\frac{3730}{3455794}} \right] \doteq 6.83032
 \]
 
 \begin{figure}
@@ -207,7 +208,7 @@ a apriórna korekcia:
             width=15cm,
             ]
         \addplot+[ybar interval,mark=no] plot coordinates {
-            (0, 204142) (0.1, 874) (0.2, 440) (0.3, 295) (0.4, 258) (0.5, 258) (0.6, 197) (0.7, 231) (0.8, 333) (0.9, 3195) (1, 0)
+            (0, 205089) (0.1, 618) (0.2, 346) (0.3, 260) (0.4, 181) (0.5, 173) (0.6, 185) (0.7, 203) (0.8, 278) (0.9, 2919) (1, 0)
         };
         \end{axis}
     \end{tikzpicture}
@@ -215,4 +216,5 @@ a apriórna korekcia:
 \label{model_bace_whole_pop_corrected}
 \end{figure}
 
-Obrázok \ref{model_bace_whole_pop_corrected} predstavuje histogram výstupov upraveného BACE modelu pri znížení interceptu \( \beta_0 \) o hodnotu \( \delta = 5.92785 \).
+Obrázok \ref{model_bace_whole_pop_corrected} predstavuje histogram výstupov upraveného BACE modelu pri znížení interceptu \( \beta_0 \) o hodnotu \( \delta = 6.83032 \).
+Model s korekciou priradil pravdepodobnosť bankrotu vyššiu než \(0.5\) len \(5658\) firmám z \(212169\), čo je rozhodne bližšie skutočnej hodnote ako to bolo pri modeli bez korekcie.

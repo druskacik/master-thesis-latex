@@ -51,7 +51,7 @@ Firmy, z ktorých sme vyberali dvojičku pre firmy v úpadku, museli okrem podmi
 
 \begin{enumerate}
     \item Firma má tržby väčšie ako \(5000\) € a celkový majetok vyšší ako \(5000\) €.
-    \item Firma má vyplnené všetky finančné údaje, ktoré vstupujú do procesu vytvárania modelu (t.j. všetkých \(70\) finančných údajov, z ktorých len časť bude vystupovať vo finálnom modeli logistickej regresie).
+    \item Firma má vyplnené všetky finančné údaje, ktoré vstupujú do procesu vytvárania modelu (t.j. všetkých \(74\) finančných údajov, z ktorých len časť bude vystupovať vo finálnom modeli logistickej regresie).
 \end{enumerate}
 
 Podmienka 1 bola zvolená s cieľom odseparovania firiem, ktoré sú neaktívne alebo príliš drobné.
@@ -75,7 +75,7 @@ Ku každej z \(2290\) firiem v našich dátach máme k dispozícii \(74\) finan�
 Cieľom tejto práce je vytvoriť model, ktorý bude obsahovať ideálne len malý počet parametrov, viď podkapitolu\autoref{model interpretability}.
 V tejto časti sa venujeme výberu najvhodnejšej kombinácie parametrov pre predikciu bankrotu.
 
-\subsubsection{Model LASSO}
+\subsubsection{Model \emph{lasso}}
 
 Prvou metódou, ktorú sme použili na výber najsignifikantnejších parametrov je \emph{lasso} (\emph{least absolute shrinkage and selection operator}).
 Metódu \emph{lasso} sme uprednostili pred inými metódami z podobnej triedy regularizácií (napr. pred \emph{ridge regression}) kvôli skutočnosti,
@@ -86,7 +86,7 @@ Pripomíname, že naším cieľom je vytvoriť jednoduchý a interpretovateľný
 Cieľom metódy \emph{lasso} je nájsť parameter \(\hat{\beta}\) spĺňajúci
 
 \[
-    \hat{\beta} = \min_{\beta \in R^k} \left( - \left[ \frac{1}{n} \sum_{i = 1}^n y_i \cdot (\beta^T x_i) - \ln{(1 + e^{\beta^T x_i})} \right] + \lambda || \beta ||_1 \right).
+    \hat{\beta} = \min_{\beta \in R^k} \left( - \frac{1}{n} \left[ \sum_{i = 1}^n y_i \cdot (\beta^T x_i) - \ln{(1 + e^{\beta^T x_i})} \right] + \lambda || \beta ||_1 \right).
 \]
 
 Parameter \(\lambda\) určuje stupeň regularizácie – pri vyšších hodnotách \(\lambda\) metóda vynuluje viac parametrov a naopak.
@@ -251,7 +251,7 @@ Koeficienty pri premenných uvádzame v tabuľke č. \ref{bace1 tabulka konecne 
         \hline
         Premenná & Koeficient \\
         \hline
-        Intercept & 0 \\
+        Intercept & -0.290 \\
         \hline
         Celková zadlženosť & 0.176 \\
         \hline
@@ -271,32 +271,33 @@ Koeficienty pri premenných uvádzame v tabuľke č. \ref{bace1 tabulka konecne 
 Vzorec na výpočet skóre týmto modelom má nasledovný tvar:
 
 \[
-    \text{score}_\text{BACE1} = \frac{1}{1 + e^{-(0.176X_1 - 0.607X_2 - 2.942X_3 - 1.167X_4 + 0.000067X_5)}}
+    \text{score}_\text{BACE1} = \frac{1}{1 + e^{-(-0.290 + 0.176X_1 - 0.607X_2 - 2.942X_3 - 1.167X_4 + 0.000067X_5)}},
 \]
 
 kde
 
-\(X_1 = \) Celková zadlženosť
+\(X_1 = \) Celková zadlženosť,
 
-\(X_2 = \) Stupeň samofinancovania
+\(X_2 = \) Stupeň samofinancovania,
 
-\(X_3 = \) Finančné účty/Aktíva
+\(X_3 = \) Finančné účty/Aktíva,
 
-\(X_4 = \) Návratnosť aktív
+\(X_4 = \) Návratnosť aktív,
 
 \(X_5 = \) Doba splácania záväzkov z obchodného styku.
 
 \paragraph{Iteračná metóda}
+\label{model_bace_2}
 
 V druhej implementácii metódy BACE vychádzame z pôvodného článku \cite{sala-i-martin}.
 Pri tomto prístupe zvolíme apriórne pravdepodobnosti jednotlivých vysvetľujúcich premenných a budeme náhodne generovať modely logistických regresií,
 až kým odhady stredných hodnôt jednotlivých premenných neskonvergujú.
 Hodnota apriórnej pravdepodobnosti premenných vychádza, podobne ako v predošlej metóde, z očakávaného počtu premenných vo výslednom modeli.
-Opäť sme zvolili očakávaný počet premenných kbar = 5, z čoho vyplýva apriórna pravdepodobnosť zahrnutia pre premenné \( \frac{5}{74} = 0.0676 \).
+Opäť sme zvolili očakávaný počet premenných \(\bar{k} = 5\), z čoho vyplýva apriórna pravdepodobnosť zahrnutia pre premenné \( \frac{5}{74} = 0.0676 \).
 
 Okrem apriórnych pravdepodobností jednotlivých premenných má táto procedúra niekoľko hyperparametrov.
 Prístup, ktorý sme zvolili, je podobný prístupu z článku \cite{sala-i-martin}, a je nasledovný:
-vždy po enumerácii \(10000\) modelov spočítame odhady stredných hodnôt koeficientov pri jednotlivých vysvetľujúcich premenných podľa vzorca \ref{posterior_expected_value},
+vždy po enumerácii \(10000\) modelov spočítame odhady stredných hodnôt koeficientov pri jednotlivých vysvetľujúcich premenných podľa vzorca (\ref{posterior_expected_value}),
 a keď \(100\)-krát po sebe zmena odhadu stredných hodnôt koeficientov, prenásobených disperziou hodnôt danej premennej v trénovacej sade \(X\),
 nepresiahne \(10^{-6}\), algoritmus skončí.
 V článku \cite{sala-i-martin} pracujú autori so zastavovacím pravidlom, kedy na prehlásenie konvergencie stačí,
@@ -379,18 +380,18 @@ Zoznam koeficientov pri vybraných premenných uvádzame v tabuľke č. \ref{bac
 Výsledný model logistickej regresie vytvorený touto metódou je daný vzorcom:
 
 \[
-    \text{score}_\text{BACE2} = \frac{1}{1 + e^{-(-0.211 + 0.056X_1 - 0.724X_2 - 2.735X_3 - 1.033X_4 + 0.000061X_5)}}
+    \text{score}_\text{BACE2} = \frac{1}{1 + e^{-(-0.211 + 0.056X_1 - 0.724X_2 - 2.735X_3 - 1.033X_4 + 0.000061X_5)}},
 \]
 
 kde
 
-\(X_1 = \) Celková zadlženosť
+\(X_1 = \) Celková zadlženosť,
 
-\(X_2 = \) Stupeň samofinancovania
+\(X_2 = \) Stupeň samofinancovania,
 
-\(X_3 = \) Finančné účty/Aktíva
+\(X_3 = \) Finančné účty/Aktíva,
 
-\(X_4 = \) Návratnosť aktív (EBIT)
+\(X_4 = \) Návratnosť aktív (EBIT),
 
 \(X_5 = \) Doba splácania záväzkov z obchodného styku.
 
@@ -431,7 +432,7 @@ Hranice, ktoré maximalizujú presnosť, dávajú vyváženejšie výsledky.
         Altmanovo Z-skóre & -0.32 & 75.8 \% & 58.5 \% & 93.0 \% & 0.8158 \\
         Index IN05 & 1.29 & 68.1 \% & 89.5 \% & 46.7 \% & 0.8054 \\
         Index IN05 & 0.24 & 76.2 \% & 72.5 \% & 79.9 \% & 0.8054 \\
-        Model \emph{LASSO} & 0.5 & 81.2 \% & 74.7 \% & 87.8 \% & 0.8808 \\
+        Model \emph{lasso} & 0.5 & 81.2 \% & 74.7 \% & 87.8 \% & 0.8808 \\
         Model BACE1 & 0.5 & 81.2 \% & 81.7 \% & 80.7 \% & 0.8876 \\
         Model BACE2 & 0.5 & 78.4 \% & 65.5 \% & 91.2 \% & 0.8882 \\
     \end{tabular}
@@ -460,7 +461,7 @@ Zvyšné dva modely majú síce vyššiu špecificitu, v problematike predikcie 
     \addlegendentry{Index IN05}
 
     \addplot [yellow] table [x=V1, y=V2, col sep=comma] {data/roc_lasso.csv};
-    \addlegendentry{Model \emph{LASSO}}
+    \addlegendentry{Model \emph{lasso}}
 
     \addplot [green] table [x=V1, y=V2, col sep=comma] {data/roc_bace_1.csv};
     \addlegendentry{Model BACE1 (kompletná enumerácia)}
